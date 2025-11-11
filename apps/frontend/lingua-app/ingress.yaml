@@ -4,21 +4,17 @@ metadata:
   name: lingua-app
   namespace: lingua-app
   annotations:
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    kubernetes.io/ingress.class: nginx
 spec:
-  ingressClassName: traefik
+  ingressClassName: nginx
   rules:
-  - host: lingua.cachefly.site
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: lingua-app
-            port:
-              number: 80
-  tls:
-  - hosts:
-    - lingua.cachefly.site
-    secretName: lingua-app-tls
+    - host: lingua.cachefly.site
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: lingua-app
+                port:
+                  number: 80
