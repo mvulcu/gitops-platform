@@ -5,8 +5,13 @@ metadata:
   namespace: lingua-app
   annotations:
     kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
 spec:
   ingressClassName: nginx
+  tls:
+  - hosts:
+    - lingua.cachefly.site
+    secretName: lingua-app-tls
   rules:
     - host: lingua.cachefly.site
       http:
