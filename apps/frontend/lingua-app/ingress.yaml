@@ -8,7 +8,7 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-  - host: lingua.yourdomain.com  # Замените на ваш домен
+  - host: lingua.cachefly.site
     http:
       paths:
       - path: /
@@ -20,5 +20,5 @@ spec:
               number: 80
   tls:
   - hosts:
-    - lingua.yourdomain.com  # Замените на ваш домен
+    - lingua.cachefly.site
     secretName: lingua-app-tls
