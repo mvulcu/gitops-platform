@@ -1,105 +1,45 @@
-apiVersion: helm.toolkit.fluxcd.io/v2beta1
+apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: kube-prometheus-stack
   namespace: monitoring
 spec:
-  interval: 10m
+  interval: 5m
   timeout: 10m
   chart:
     spec:
       chart: kube-prometheus-stack
-      version: '>=65.0.0 <66.0.0'
+      version: 65.5.1
       sourceRef:
         kind: HelmRepository
         name: prometheus-community
         namespace: flux-system
-      interval: 1h
   install:
-    crds: CreateReplace
+    createNamespace: false
     remediation:
       retries: 3
   upgrade:
-    crds: CreateReplace
     remediation:
       retries: 3
   values:
-    # Grafana configuration
-    grafana:
-      enabled: true
-      adminPassword: admin  # Change this in production!
+    fullnameOverride: kube-prometheus-stack
 
+    prometheus:
+      prometheusSpec:
+        retention: 7d
+
+    grafana:
+      adminUser: admin
+      adminPassword: admin
       ingress:
         enabled: true
         ingressClassName: nginx
         annotations:
-          cert-manager.io/cluster-issuer: "letsencrypt-prod"
+          kubernetes.io/ingress.class: nginx
+          cert-manager.io/cluster-issuer: letsencrypt-prod
         hosts:
           - grafana.cachefly.site
         tls:
-          - secretName: grafana-tls
-            hosts:
+          - hosts:
               - grafana.cachefly.site
-
-      # Persistence for Grafana dashboards
-      persistence:
-        enabled: true
-        size: 1Gi
-        storageClassName: local-path  # K3s default StorageClass
-
-    # Prometheus configuration
-    prometheus:
-      prometheusSpec:
-        retention: 7d
-        storageSpec:
-          volumeClaimTemplate:
-            spec:
-              storageClassName: local-path
-              accessModes: ["ReadWriteOnce"]
-              resources:
-                requests:
-                  storage: 10Gi
-
-        # Resource limits
-        resources:
-          requests:
-            cpu: 200m
-            memory: 512Mi
-          limits:
-            cpu: 1000m
-            memory: 2Gi
-
-    # Alertmanager configuration
-    alertmanager:
-      enabled: true
-      alertmanagerSpec:
-        storage:
-          volumeClaimTemplate:
-            spec:
-              storageClassName: local-path
-              accessModes: ["ReadWriteOnce"]
-              resources:
-                requests:
-                  storage: 2Gi
-
-    # Node exporter - metrics from nodes
-    nodeExporter:
-      enabled: true
-
-    # Kube-state-metrics - K8s object metrics
-    kubeStateMetrics:
-      enabled: true
-
-    # Default ServiceMonitors
-    defaultRules:
-      create: true
-
-    # Enable monitoring for K3s components
-    kubeControllerManager:
-      enabled: false  # K3s doesn't expose these separately
-    kubeScheduler:
-      enabled: false
-    kubeProxy:
-      enabled: false
-    kubeEtcd:
-      enabled: false
+            secretName: grafana-tls
