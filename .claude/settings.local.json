@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(done)",
+      "Bash(find /mnt/d/Projects/gitops-platform/apps/lingua-app -name \"*.yaml\" -exec sh -c 'echo \"\"=== {} ===\"\"; tail -c 5 \"\"{}\"\" | od -An -tx1' ;)",
+      "Bash(cat:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nfix: Remove trailing newlines from lingua-app kustomization files\n\nRemove unnecessary trailing newlines from kustomization.yaml files\nthat were causing Flux reconciliation to hang. This ensures proper\nYAML parsing by kustomize.\n\nAffected files:\n- apps/lingua-app/kustomization.yaml\n- apps/lingua-app/postgres/kustomization.yaml\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git push:*)",
+      "Bash(kustomize build:*)",
+      "Bash(kubectl kustomize:*)",
+      "Bash(git commit:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
