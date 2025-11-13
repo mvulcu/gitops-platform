@@ -31,9 +31,9 @@ spec:
 
       containers:
       - name: api
-        # Security: Use specific version tag, NOT latest
-        image: ghcr.io/mvulcu/lingualink-api:v1.0.0
-        imagePullPolicy: IfNotPresent
+        # Auto-updated by CI/CD on main branch pushes
+        image: ghcr.io/mvulcu/lingualink-api:main
+        imagePullPolicy: Always
 
         ports:
         - containerPort: 8000

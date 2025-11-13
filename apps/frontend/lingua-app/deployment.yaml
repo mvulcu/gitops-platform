@@ -30,9 +30,9 @@ spec:
 
       containers:
       - name: lingua-app
-        # Security: Use specific version tag, NOT latest
-        image: ghcr.io/mvulcu/lingua-app:v1.0.0
-        imagePullPolicy: IfNotPresent
+        # Auto-updated by CI/CD on master branch pushes
+        image: ghcr.io/mvulcu/lingua-app:master
+        imagePullPolicy: Always
 
         ports:
         - containerPort: 3000
