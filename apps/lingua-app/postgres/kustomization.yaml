@@ -1,9 +1,9 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: lingua-app
+
 resources:
   - configmap.yaml
   - statefulset.yaml
   - service.yaml
-  # Uncomment after generating sealed secret (see sealed-secret.yaml for instructions)
-  # - sealed-secret.yaml
+  - sealed-secret.yaml
