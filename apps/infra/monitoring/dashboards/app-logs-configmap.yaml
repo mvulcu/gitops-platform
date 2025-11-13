@@ -72,6 +72,3 @@ data:
       "version": 1,
       "weekStart": ""
     }
-kind: ConfigMap
-metadata:
-  name: temp
