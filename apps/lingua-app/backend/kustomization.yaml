@@ -10,5 +10,4 @@ resources:
   - pdb.yaml
   - networkpolicy.yaml
   - servicemonitor.yaml
-  # Uncomment after generating with kubeseal
-  # - sealed-secret.yaml
+  - sealed-secret.yaml
