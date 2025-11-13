@@ -88,3 +88,9 @@ spec:
         limits:
           cpu: 200m
           memory: 128Mi
+
+    # Disable caches to reduce memory footprint for small VPS
+    chunksCache:
+      enabled: false
+    resultsCache:
+      enabled: false
