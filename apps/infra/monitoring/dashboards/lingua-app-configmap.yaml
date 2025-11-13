@@ -1,0 +1,235 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-lingua-app
+  namespace: monitoring
+  labels:
+    grafana_dashboard: "1"
+data:
+  lingua-app-dashboard.json: "{\r\n  \"annotations\": {\r\n    \"list\": []\r\n  },\r\n
+    \ \"editable\": true,\r\n  \"fiscalYearStartMonth\": 0,\r\n  \"graphTooltip\":
+    0,\r\n  \"id\": null,\r\n  \"links\": [],\r\n  \"panels\": [\r\n    {\r\n      \"datasource\":
+    {\r\n        \"type\": \"prometheus\",\r\n        \"uid\": \"prometheus\"\r\n
+    \     },\r\n      \"fieldConfig\": {\r\n        \"defaults\": {\r\n          \"color\":
+    {\r\n            \"mode\": \"thresholds\"\r\n          },\r\n          \"mappings\":
+    [],\r\n          \"thresholds\": {\r\n            \"mode\": \"absolute\",\r\n
+    \           \"steps\": [\r\n              {\r\n                \"color\": \"red\",\r\n
+    \               \"value\": null\r\n              },\r\n              {\r\n                \"color\":
+    \"yellow\",\r\n                \"value\": 1\r\n              },\r\n              {\r\n
+    \               \"color\": \"green\",\r\n                \"value\": 2\r\n              }\r\n
+    \           ]\r\n          },\r\n          \"unit\": \"short\"\r\n        }\r\n
+    \     },\r\n      \"gridPos\": {\r\n        \"h\": 4,\r\n        \"w\": 6,\r\n
+    \       \"x\": 0,\r\n        \"y\": 0\r\n      },\r\n      \"id\": 1,\r\n      \"options\":
+    {\r\n        \"orientation\": \"auto\",\r\n        \"reduceOptions\": {\r\n          \"values\":
+    false,\r\n          \"calcs\": [\"lastNotNull\"],\r\n          \"fields\": \"\"\r\n
+    \       },\r\n        \"showThresholdLabels\": false,\r\n        \"showThresholdMarkers\":
+    true\r\n      },\r\n      \"pluginVersion\": \"10.0.0\",\r\n      \"targets\":
+    [\r\n        {\r\n          \"datasource\": {\r\n            \"type\": \"prometheus\",\r\n
+    \           \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\": \"sum(kube_pod_status_phase{namespace=\\\"lingua-app\\\",phase=\\\"Running\\\"})\",\r\n
+    \         \"refId\": \"A\"\r\n        }\r\n      ],\r\n      \"title\": \"Running
+    Pods\",\r\n      \"type\": \"gauge\"\r\n    },\r\n    {\r\n      \"datasource\":
+    {\r\n        \"type\": \"prometheus\",\r\n        \"uid\": \"prometheus\"\r\n
+    \     },\r\n      \"fieldConfig\": {\r\n        \"defaults\": {\r\n          \"color\":
+    {\r\n            \"mode\": \"thresholds\"\r\n          },\r\n          \"mappings\":
+    [],\r\n          \"thresholds\": {\r\n            \"mode\": \"absolute\",\r\n
+    \           \"steps\": [\r\n              {\r\n                \"color\": \"green\",\r\n
+    \               \"value\": null\r\n              },\r\n              {\r\n                \"color\":
+    \"yellow\",\r\n                \"value\": 2\r\n              },\r\n              {\r\n
+    \               \"color\": \"red\",\r\n                \"value\": 4\r\n              }\r\n
+    \           ]\r\n          },\r\n          \"unit\": \"short\"\r\n        }\r\n
+    \     },\r\n      \"gridPos\": {\r\n        \"h\": 4,\r\n        \"w\": 6,\r\n
+    \       \"x\": 6,\r\n        \"y\": 0\r\n      },\r\n      \"id\": 2,\r\n      \"options\":
+    {\r\n        \"orientation\": \"auto\",\r\n        \"reduceOptions\": {\r\n          \"values\":
+    false,\r\n          \"calcs\": [\"lastNotNull\"],\r\n          \"fields\": \"\"\r\n
+    \       },\r\n        \"showThresholdLabels\": false,\r\n        \"showThresholdMarkers\":
+    true\r\n      },\r\n      \"pluginVersion\": \"10.0.0\",\r\n      \"targets\":
+    [\r\n        {\r\n          \"datasource\": {\r\n            \"type\": \"prometheus\",\r\n
+    \           \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\": \"kube_horizontalpodautoscaler_status_current_replicas{namespace=\\\"lingua-app\\\"}\",\r\n
+    \         \"refId\": \"A\"\r\n        }\r\n      ],\r\n      \"title\": \"HPA
+    Current Replicas\",\r\n      \"type\": \"gauge\"\r\n    },\r\n    {\r\n      \"datasource\":
+    {\r\n        \"type\": \"prometheus\",\r\n        \"uid\": \"prometheus\"\r\n
+    \     },\r\n      \"fieldConfig\": {\r\n        \"defaults\": {\r\n          \"color\":
+    {\r\n            \"mode\": \"thresholds\"\r\n          },\r\n          \"mappings\":
+    [],\r\n          \"thresholds\": {\r\n            \"mode\": \"absolute\",\r\n
+    \           \"steps\": [\r\n              {\r\n                \"color\": \"green\",\r\n
+    \               \"value\": null\r\n              },\r\n              {\r\n                \"color\":
+    \"yellow\",\r\n                \"value\": 60\r\n              },\r\n              {\r\n
+    \               \"color\": \"red\",\r\n                \"value\": 80\r\n              }\r\n
+    \           ]\r\n          },\r\n          \"unit\": \"percent\"\r\n        }\r\n
+    \     },\r\n      \"gridPos\": {\r\n        \"h\": 4,\r\n        \"w\": 6,\r\n
+    \       \"x\": 12,\r\n        \"y\": 0\r\n      },\r\n      \"id\": 3,\r\n      \"options\":
+    {\r\n        \"orientation\": \"auto\",\r\n        \"reduceOptions\": {\r\n          \"values\":
+    false,\r\n          \"calcs\": [\"lastNotNull\"],\r\n          \"fields\": \"\"\r\n
+    \       },\r\n        \"showThresholdLabels\": false,\r\n        \"showThresholdMarkers\":
+    true\r\n      },\r\n      \"pluginVersion\": \"10.0.0\",\r\n      \"targets\":
+    [\r\n        {\r\n          \"datasource\": {\r\n            \"type\": \"prometheus\",\r\n
+    \           \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\": \"avg(rate(container_cpu_usage_seconds_total{namespace=\\\"lingua-app\\\",pod=~\\\"lingua-app-.*\\\",container!=\\\"\\\"}[5m]))
+    * 100\",\r\n          \"refId\": \"A\"\r\n        }\r\n      ],\r\n      \"title\":
+    \"Avg CPU Usage\",\r\n      \"type\": \"gauge\"\r\n    },\r\n    {\r\n      \"datasource\":
+    {\r\n        \"type\": \"prometheus\",\r\n        \"uid\": \"prometheus\"\r\n
+    \     },\r\n      \"fieldConfig\": {\r\n        \"defaults\": {\r\n          \"color\":
+    {\r\n            \"mode\": \"thresholds\"\r\n          },\r\n          \"mappings\":
+    [],\r\n          \"thresholds\": {\r\n            \"mode\": \"absolute\",\r\n
+    \           \"steps\": [\r\n              {\r\n                \"color\": \"green\",\r\n
+    \               \"value\": null\r\n              },\r\n              {\r\n                \"color\":
+    \"yellow\",\r\n                \"value\": 70\r\n              },\r\n              {\r\n
+    \               \"color\": \"red\",\r\n                \"value\": 85\r\n              }\r\n
+    \           ]\r\n          },\r\n          \"unit\": \"percent\"\r\n        }\r\n
+    \     },\r\n      \"gridPos\": {\r\n        \"h\": 4,\r\n        \"w\": 6,\r\n
+    \       \"x\": 18,\r\n        \"y\": 0\r\n      },\r\n      \"id\": 4,\r\n      \"options\":
+    {\r\n        \"orientation\": \"auto\",\r\n        \"reduceOptions\": {\r\n          \"values\":
+    false,\r\n          \"calcs\": [\"lastNotNull\"],\r\n          \"fields\": \"\"\r\n
+    \       },\r\n        \"showThresholdLabels\": false,\r\n        \"showThresholdMarkers\":
+    true\r\n      },\r\n      \"pluginVersion\": \"10.0.0\",\r\n      \"targets\":
+    [\r\n        {\r\n          \"datasource\": {\r\n            \"type\": \"prometheus\",\r\n
+    \           \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\": \"avg(container_memory_working_set_bytes{namespace=\\\"lingua-app\\\",pod=~\\\"lingua-app-.*\\\",container!=\\\"\\\"}
+    / container_spec_memory_limit_bytes{namespace=\\\"lingua-app\\\",pod=~\\\"lingua-app-.*\\\",container!=\\\"\\\"})
+    * 100\",\r\n          \"refId\": \"A\"\r\n        }\r\n      ],\r\n      \"title\":
+    \"Avg Memory Usage\",\r\n      \"type\": \"gauge\"\r\n    },\r\n    {\r\n      \"datasource\":
+    {\r\n        \"type\": \"prometheus\",\r\n        \"uid\": \"prometheus\"\r\n
+    \     },\r\n      \"fieldConfig\": {\r\n        \"defaults\": {\r\n          \"color\":
+    {\r\n            \"mode\": \"palette-classic\"\r\n          },\r\n          \"custom\":
+    {\r\n            \"axisCenteredZero\": false,\r\n            \"axisColorMode\":
+    \"text\",\r\n            \"axisLabel\": \"\",\r\n            \"axisPlacement\":
+    \"auto\",\r\n            \"barAlignment\": 0,\r\n            \"drawStyle\": \"line\",\r\n
+    \           \"fillOpacity\": 10,\r\n            \"gradientMode\": \"none\",\r\n
+    \           \"hideFrom\": {\r\n              \"tooltip\": false,\r\n              \"viz\":
+    false,\r\n              \"legend\": false\r\n            },\r\n            \"lineInterpolation\":
+    \"linear\",\r\n            \"lineWidth\": 1,\r\n            \"pointSize\": 5,\r\n
+    \           \"scaleDistribution\": {\r\n              \"type\": \"linear\"\r\n
+    \           },\r\n            \"showPoints\": \"never\",\r\n            \"spanNulls\":
+    false,\r\n            \"stacking\": {\r\n              \"group\": \"A\",\r\n              \"mode\":
+    \"none\"\r\n            },\r\n            \"thresholdsStyle\": {\r\n              \"mode\":
+    \"off\"\r\n            }\r\n          },\r\n          \"mappings\": [],\r\n          \"thresholds\":
+    {\r\n            \"mode\": \"absolute\",\r\n            \"steps\": [\r\n              {\r\n
+    \               \"color\": \"green\",\r\n                \"value\": null\r\n              }\r\n
+    \           ]\r\n          },\r\n          \"unit\": \"percentunit\"\r\n        }\r\n
+    \     },\r\n      \"gridPos\": {\r\n        \"h\": 8,\r\n        \"w\": 12,\r\n
+    \       \"x\": 0,\r\n        \"y\": 4\r\n      },\r\n      \"id\": 5,\r\n      \"options\":
+    {\r\n        \"legend\": {\r\n          \"calcs\": [\"mean\", \"max\"],\r\n          \"displayMode\":
+    \"table\",\r\n          \"placement\": \"bottom\",\r\n          \"showLegend\":
+    true\r\n        },\r\n        \"tooltip\": {\r\n          \"mode\": \"multi\",\r\n
+    \         \"sort\": \"none\"\r\n        }\r\n      },\r\n      \"pluginVersion\":
+    \"10.0.0\",\r\n      \"targets\": [\r\n        {\r\n          \"datasource\":
+    {\r\n            \"type\": \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n
+    \         },\r\n          \"expr\": \"rate(container_cpu_usage_seconds_total{namespace=\\\"lingua-app\\\",pod=~\\\"lingua-app-.*\\\",container!=\\\"\\\"}[5m])\",\r\n
+    \         \"refId\": \"A\",\r\n          \"legendFormat\": \"{{pod}}\"\r\n        }\r\n
+    \     ],\r\n      \"title\": \"CPU Usage by Pod\",\r\n      \"type\": \"timeseries\"\r\n
+    \   },\r\n    {\r\n      \"datasource\": {\r\n        \"type\": \"prometheus\",\r\n
+    \       \"uid\": \"prometheus\"\r\n      },\r\n      \"fieldConfig\": {\r\n        \"defaults\":
+    {\r\n          \"color\": {\r\n            \"mode\": \"palette-classic\"\r\n          },\r\n
+    \         \"custom\": {\r\n            \"axisCenteredZero\": false,\r\n            \"axisColorMode\":
+    \"text\",\r\n            \"axisLabel\": \"\",\r\n            \"axisPlacement\":
+    \"auto\",\r\n            \"barAlignment\": 0,\r\n            \"drawStyle\": \"line\",\r\n
+    \           \"fillOpacity\": 10,\r\n            \"gradientMode\": \"none\",\r\n
+    \           \"hideFrom\": {\r\n              \"tooltip\": false,\r\n              \"viz\":
+    false,\r\n              \"legend\": false\r\n            },\r\n            \"lineInterpolation\":
+    \"linear\",\r\n            \"lineWidth\": 1,\r\n            \"pointSize\": 5,\r\n
+    \           \"scaleDistribution\": {\r\n              \"type\": \"linear\"\r\n
+    \           },\r\n            \"showPoints\": \"never\",\r\n            \"spanNulls\":
+    false,\r\n            \"stacking\": {\r\n              \"group\": \"A\",\r\n              \"mode\":
+    \"none\"\r\n            },\r\n            \"thresholdsStyle\": {\r\n              \"mode\":
+    \"off\"\r\n            }\r\n          },\r\n          \"mappings\": [],\r\n          \"thresholds\":
+    {\r\n            \"mode\": \"absolute\",\r\n            \"steps\": [\r\n              {\r\n
+    \               \"color\": \"green\",\r\n                \"value\": null\r\n              }\r\n
+    \           ]\r\n          },\r\n          \"unit\": \"bytes\"\r\n        }\r\n
+    \     },\r\n      \"gridPos\": {\r\n        \"h\": 8,\r\n        \"w\": 12,\r\n
+    \       \"x\": 12,\r\n        \"y\": 4\r\n      },\r\n      \"id\": 6,\r\n      \"options\":
+    {\r\n        \"legend\": {\r\n          \"calcs\": [\"mean\", \"max\"],\r\n          \"displayMode\":
+    \"table\",\r\n          \"placement\": \"bottom\",\r\n          \"showLegend\":
+    true\r\n        },\r\n        \"tooltip\": {\r\n          \"mode\": \"multi\",\r\n
+    \         \"sort\": \"none\"\r\n        }\r\n      },\r\n      \"pluginVersion\":
+    \"10.0.0\",\r\n      \"targets\": [\r\n        {\r\n          \"datasource\":
+    {\r\n            \"type\": \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n
+    \         },\r\n          \"expr\": \"container_memory_working_set_bytes{namespace=\\\"lingua-app\\\",pod=~\\\"lingua-app-.*\\\",container!=\\\"\\\"}\",\r\n
+    \         \"refId\": \"A\",\r\n          \"legendFormat\": \"{{pod}}\"\r\n        }\r\n
+    \     ],\r\n      \"title\": \"Memory Usage by Pod\",\r\n      \"type\": \"timeseries\"\r\n
+    \   },\r\n    {\r\n      \"datasource\": {\r\n        \"type\": \"prometheus\",\r\n
+    \       \"uid\": \"prometheus\"\r\n      },\r\n      \"fieldConfig\": {\r\n        \"defaults\":
+    {\r\n          \"color\": {\r\n            \"mode\": \"palette-classic\"\r\n          },\r\n
+    \         \"custom\": {\r\n            \"axisCenteredZero\": false,\r\n            \"axisColorMode\":
+    \"text\",\r\n            \"axisLabel\": \"\",\r\n            \"axisPlacement\":
+    \"auto\",\r\n            \"barAlignment\": 0,\r\n            \"drawStyle\": \"line\",\r\n
+    \           \"fillOpacity\": 10,\r\n            \"gradientMode\": \"none\",\r\n
+    \           \"hideFrom\": {\r\n              \"tooltip\": false,\r\n              \"viz\":
+    false,\r\n              \"legend\": false\r\n            },\r\n            \"lineInterpolation\":
+    \"linear\",\r\n            \"lineWidth\": 1,\r\n            \"pointSize\": 5,\r\n
+    \           \"scaleDistribution\": {\r\n              \"type\": \"linear\"\r\n
+    \           },\r\n            \"showPoints\": \"never\",\r\n            \"spanNulls\":
+    false,\r\n            \"stacking\": {\r\n              \"group\": \"A\",\r\n              \"mode\":
+    \"none\"\r\n            },\r\n            \"thresholdsStyle\": {\r\n              \"mode\":
+    \"line\"\r\n            }\r\n          },\r\n          \"mappings\": [],\r\n          \"thresholds\":
+    {\r\n            \"mode\": \"absolute\",\r\n            \"steps\": [\r\n              {\r\n
+    \               \"color\": \"green\",\r\n                \"value\": null\r\n              },\r\n
+    \             {\r\n                \"color\": \"red\",\r\n                \"value\":
+    5\r\n              }\r\n            ]\r\n          },\r\n          \"unit\": \"short\"\r\n
+    \       }\r\n      },\r\n      \"gridPos\": {\r\n        \"h\": 8,\r\n        \"w\":
+    12,\r\n        \"x\": 0,\r\n        \"y\": 12\r\n      },\r\n      \"id\": 7,\r\n
+    \     \"options\": {\r\n        \"legend\": {\r\n          \"calcs\": [\"max\",
+    \"last\"],\r\n          \"displayMode\": \"table\",\r\n          \"placement\":
+    \"bottom\",\r\n          \"showLegend\": true\r\n        },\r\n        \"tooltip\":
+    {\r\n          \"mode\": \"multi\",\r\n          \"sort\": \"none\"\r\n        }\r\n
+    \     },\r\n      \"pluginVersion\": \"10.0.0\",\r\n      \"targets\": [\r\n        {\r\n
+    \         \"datasource\": {\r\n            \"type\": \"prometheus\",\r\n            \"uid\":
+    \"prometheus\"\r\n          },\r\n          \"expr\": \"kube_horizontalpodautoscaler_status_current_replicas{namespace=\\\"lingua-app\\\"}\",\r\n
+    \         \"refId\": \"A\",\r\n          \"legendFormat\": \"Current\"\r\n        },\r\n
+    \       {\r\n          \"datasource\": {\r\n            \"type\": \"prometheus\",\r\n
+    \           \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\": \"kube_horizontalpodautoscaler_status_desired_replicas{namespace=\\\"lingua-app\\\"}\",\r\n
+    \         \"refId\": \"B\",\r\n          \"legendFormat\": \"Desired\"\r\n        },\r\n
+    \       {\r\n          \"datasource\": {\r\n            \"type\": \"prometheus\",\r\n
+    \           \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\": \"kube_horizontalpodautoscaler_spec_min_replicas{namespace=\\\"lingua-app\\\"}\",\r\n
+    \         \"refId\": \"C\",\r\n          \"legendFormat\": \"Min\"\r\n        },\r\n
+    \       {\r\n          \"datasource\": {\r\n            \"type\": \"prometheus\",\r\n
+    \           \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\": \"kube_horizontalpodautoscaler_spec_max_replicas{namespace=\\\"lingua-app\\\"}\",\r\n
+    \         \"refId\": \"D\",\r\n          \"legendFormat\": \"Max\"\r\n        }\r\n
+    \     ],\r\n      \"title\": \"HPA Scaling Activity\",\r\n      \"type\": \"timeseries\"\r\n
+    \   },\r\n    {\r\n      \"datasource\": {\r\n        \"type\": \"prometheus\",\r\n
+    \       \"uid\": \"prometheus\"\r\n      },\r\n      \"fieldConfig\": {\r\n        \"defaults\":
+    {\r\n          \"color\": {\r\n            \"mode\": \"palette-classic\"\r\n          },\r\n
+    \         \"custom\": {\r\n            \"axisCenteredZero\": false,\r\n            \"axisColorMode\":
+    \"text\",\r\n            \"axisLabel\": \"\",\r\n            \"axisPlacement\":
+    \"auto\",\r\n            \"barAlignment\": 0,\r\n            \"drawStyle\": \"line\",\r\n
+    \           \"fillOpacity\": 10,\r\n            \"gradientMode\": \"none\",\r\n
+    \           \"hideFrom\": {\r\n              \"tooltip\": false,\r\n              \"viz\":
+    false,\r\n              \"legend\": false\r\n            },\r\n            \"lineInterpolation\":
+    \"linear\",\r\n            \"lineWidth\": 1,\r\n            \"pointSize\": 5,\r\n
+    \           \"scaleDistribution\": {\r\n              \"type\": \"linear\"\r\n
+    \           },\r\n            \"showPoints\": \"never\",\r\n            \"spanNulls\":
+    false,\r\n            \"stacking\": {\r\n              \"group\": \"A\",\r\n              \"mode\":
+    \"none\"\r\n            },\r\n            \"thresholdsStyle\": {\r\n              \"mode\":
+    \"off\"\r\n            }\r\n          },\r\n          \"mappings\": [],\r\n          \"thresholds\":
+    {\r\n            \"mode\": \"absolute\",\r\n            \"steps\": [\r\n              {\r\n
+    \               \"color\": \"green\",\r\n                \"value\": null\r\n              }\r\n
+    \           ]\r\n          },\r\n          \"unit\": \"short\"\r\n        }\r\n
+    \     },\r\n      \"gridPos\": {\r\n        \"h\": 8,\r\n        \"w\": 12,\r\n
+    \       \"x\": 12,\r\n        \"y\": 12\r\n      },\r\n      \"id\": 8,\r\n      \"options\":
+    {\r\n        \"legend\": {\r\n          \"calcs\": [\"max\", \"last\"],\r\n          \"displayMode\":
+    \"table\",\r\n          \"placement\": \"bottom\",\r\n          \"showLegend\":
+    true\r\n        },\r\n        \"tooltip\": {\r\n          \"mode\": \"multi\",\r\n
+    \         \"sort\": \"none\"\r\n        }\r\n      },\r\n      \"pluginVersion\":
+    \"10.0.0\",\r\n      \"targets\": [\r\n        {\r\n          \"datasource\":
+    {\r\n            \"type\": \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n
+    \         },\r\n          \"expr\": \"sum(kube_pod_container_status_restarts_total{namespace=\\\"lingua-app\\\",pod=~\\\"lingua-app-.*\\\"})
+    by (pod)\",\r\n          \"refId\": \"A\",\r\n          \"legendFormat\": \"{{pod}}\"\r\n
+    \       }\r\n      ],\r\n      \"title\": \"Pod Restarts\",\r\n      \"type\":
+    \"timeseries\"\r\n    },\r\n    {\r\n      \"datasource\": {\r\n        \"type\":
+    \"loki\",\r\n        \"uid\": \"loki\"\r\n      },\r\n      \"gridPos\": {\r\n
+    \       \"h\": 10,\r\n        \"w\": 24,\r\n        \"x\": 0,\r\n        \"y\":
+    20\r\n      },\r\n      \"id\": 9,\r\n      \"options\": {\r\n        \"dedupStrategy\":
+    \"none\",\r\n        \"enableLogDetails\": true,\r\n        \"prettifyLogMessage\":
+    false,\r\n        \"showCommonLabels\": false,\r\n        \"showLabels\": false,\r\n
+    \       \"showTime\": true,\r\n        \"sortOrder\": \"Descending\",\r\n        \"wrapLogMessage\":
+    false\r\n      },\r\n      \"pluginVersion\": \"10.0.0\",\r\n      \"targets\":
+    [\r\n        {\r\n          \"datasource\": {\r\n            \"type\": \"loki\",\r\n
+    \           \"uid\": \"loki\"\r\n          },\r\n          \"expr\": \"{namespace=\\\"lingua-app\\\"}\",\r\n
+    \         \"refId\": \"A\"\r\n        }\r\n      ],\r\n      \"title\": \"Application
+    Logs\",\r\n      \"type\": \"logs\"\r\n    }\r\n  ],\r\n  \"refresh\": \"10s\",\r\n
+    \ \"schemaVersion\": 38,\r\n  \"style\": \"dark\",\r\n  \"tags\": [\"lingua-app\",
+    \"application\", \"kubernetes\"],\r\n  \"templating\": {\r\n    \"list\": []\r\n
+    \ },\r\n  \"time\": {\r\n    \"from\": \"now-1h\",\r\n    \"to\": \"now\"\r\n
+    \ },\r\n  \"timepicker\": {},\r\n  \"timezone\": \"\",\r\n  \"title\": \"LinguaLink
+    Application\",\r\n  \"uid\": \"lingua-app-dashboard\",\r\n  \"version\": 1,\r\n
+    \ \"weekStart\": \"\"\r\n}\r\n"
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-lingua-app
