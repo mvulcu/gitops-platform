@@ -3,5 +3,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - postgres
-  # Backend will be added in Phase 3
-  # - backend
+  - statefulset.yaml
+  - service.yaml
+  - configmap.yaml
+  - sealed-secret.yaml
