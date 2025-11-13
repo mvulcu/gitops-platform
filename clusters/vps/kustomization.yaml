@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - ../../apps/infra
   - ../../apps/frontend
+  - ../../apps/lingua-app
