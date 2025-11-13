@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - loki-logs-configmap.yaml
   - lingua-app-configmap.yaml
+  - app-logs-configmap.yaml
