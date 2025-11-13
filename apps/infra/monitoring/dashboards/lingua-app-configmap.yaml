@@ -1,10 +1,4 @@
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: grafana-dashboard-lingua-app
-  namespace: monitoring
-  labels:
-    grafana_dashboard: "1"
 data:
   lingua-app-dashboard.json: "{\r\n  \"annotations\": {\r\n    \"list\": []\r\n  },\r\n
     \ \"editable\": true,\r\n  \"fiscalYearStartMonth\": 0,\r\n  \"graphTooltip\":
@@ -232,4 +226,7 @@ data:
     \ \"weekStart\": \"\"\r\n}\r\n"
 kind: ConfigMap
 metadata:
+  labels:
+    grafana_dashboard: "1"
   name: grafana-dashboard-lingua-app
+  namespace: monitoring
