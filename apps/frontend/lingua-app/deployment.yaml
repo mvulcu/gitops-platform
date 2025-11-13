@@ -5,6 +5,7 @@ metadata:
   namespace: lingua-app
   labels:
     app: lingua-app
+    component: frontend
 spec:
   replicas: 2
   selector:
@@ -14,20 +15,49 @@ spec:
     metadata:
       labels:
         app: lingua-app
+        component: frontend
     spec:
       imagePullSecrets:
       - name: ghcr-creds
+
+      # Security: Run as non-root user
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+
       containers:
       - name: lingua-app
-        image: ghcr.io/mvulcu/lingua-app:latest
+        # Security: Use specific version tag, NOT latest
+        image: ghcr.io/mvulcu/lingua-app:v1.0.0
+        imagePullPolicy: IfNotPresent
+
         ports:
         - containerPort: 3000
           name: http
+          protocol: TCP
+
+        # Security: Container-level security context
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          runAsNonRoot: true
+          runAsUser: 1000
+          capabilities:
+            drop:
+            - ALL
+
         env:
         - name: NODE_ENV
           value: "production"
         - name: PORT
           value: "3000"
+        # Backend API URL
+        - name: NEXT_PUBLIC_API_URL
+          value: "https://api.lingua.cachefly.site"
+
         resources:
           requests:
             memory: "128Mi"
@@ -35,15 +65,23 @@ spec:
           limits:
             memory: "512Mi"
             cpu: "500m"
+
         livenessProbe:
           httpGet:
             path: /
             port: 3000
+            scheme: HTTP
           initialDelaySeconds: 30
           periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+
         readinessProbe:
           httpGet:
             path: /
             port: 3000
+            scheme: HTTP
           initialDelaySeconds: 10
           periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
