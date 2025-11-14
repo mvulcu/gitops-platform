@@ -3,6 +3,11 @@ kind: Kustomization
 namespace: lingua-app
 resources:
   - configmap.yaml
-  - statefulset.yaml
+  - deployment.yaml
   - service.yaml
+  - ingress.yaml
+  - hpa.yaml
+  - pdb.yaml
+  - networkpolicy.yaml
+  - servicemonitor.yaml
   - sealed-secret.yaml
