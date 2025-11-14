@@ -28,3 +28,4 @@ spec:
           targetLabel: namespace
         - sourceLabels: [__meta_kubernetes_pod_label_app]
           targetLabel: app
+        - sourceLabels: [__meta_kubernetes_pod_label_component]
