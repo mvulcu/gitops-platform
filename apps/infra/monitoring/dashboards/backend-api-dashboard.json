@@ -98,7 +98,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(rate(http_requests_total{job=\"lingua-app/lingualink-backend\"}[5m])) by (method, handler)",
+          "expr": "sum(rate(http_requests_total{job=\"lingualink-backend\"}[5m])) by (method, handler)",
           "refId": "A",
           "legendFormat": "{{method}} {{handler}}"
         }
@@ -166,7 +166,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(http_requests_total{job=\"lingua-app/lingualink-backend\"})",
+          "expr": "sum(http_requests_total{job=\"lingualink-backend\"})",
           "refId": "A"
         }
       ],
@@ -228,7 +228,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(http_requests_inprogress{job=\"lingua-app/lingualink-backend\"})",
+          "expr": "sum(http_requests_inprogress{job=\"lingualink-backend\"})",
           "refId": "A"
         }
       ],
@@ -313,7 +313,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(rate(http_requests_total{job=\"lingua-app/lingualink-backend\"}[5m]))",
+          "expr": "sum(rate(http_requests_total{job=\"lingualink-backend\"}[5m]))",
           "refId": "A",
           "legendFormat": "Total RPS"
         }
@@ -419,7 +419,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "histogram_quantile(0.50, sum(rate(http_request_duration_seconds_bucket{job=\"lingua-app/lingualink-backend\"}[5m])) by (le))",
+          "expr": "histogram_quantile(0.50, sum(rate(http_request_duration_seconds_bucket{job=\"lingualink-backend\"}[5m])) by (le))",
           "refId": "A",
           "legendFormat": "p50"
         },
@@ -428,7 +428,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job=\"lingua-app/lingualink-backend\"}[5m])) by (le))",
+          "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job=\"lingualink-backend\"}[5m])) by (le))",
           "refId": "B",
           "legendFormat": "p95"
         },
@@ -437,7 +437,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{job=\"lingua-app/lingualink-backend\"}[5m])) by (le))",
+          "expr": "histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{job=\"lingualink-backend\"}[5m])) by (le))",
           "refId": "C",
           "legendFormat": "p99"
         }
@@ -500,7 +500,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(rate(http_request_duration_seconds_sum{job=\"lingua-app/lingualink-backend\"}[5m])) / sum(rate(http_request_duration_seconds_count{job=\"lingua-app/lingualink-backend\"}[5m]))",
+          "expr": "sum(rate(http_request_duration_seconds_sum{job=\"lingualink-backend\"}[5m])) / sum(rate(http_request_duration_seconds_count{job=\"lingualink-backend\"}[5m]))",
           "refId": "A"
         }
       ],
@@ -597,7 +597,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(rate(http_requests_total{namespace=\"lingua-app\",app=\"lingualink-backend\",status=~\"4..\"}[5m])) by (status)",
+          "expr": "sum(rate(http_requests_total{job=\"lingualink-backend\",status=~\"4..\"}[5m])) by (status)",
           "refId": "A",
           "legendFormat": "{{status}} (Client Errors)"
         },
@@ -606,7 +606,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(rate(http_requests_total{namespace=\"lingua-app\",app=\"lingualink-backend\",status=~\"5..\"}[5m])) by (status)",
+          "expr": "sum(rate(http_requests_total{job=\"lingualink-backend\",status=~\"5..\"}[5m])) by (status)",
           "refId": "B",
           "legendFormat": "{{status}} (Server Errors)"
         }
@@ -660,7 +660,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(rate(http_requests_total{job=\"lingua-app/lingualink-backend\"}[5m])) by (status)",
+          "expr": "sum(rate(http_requests_total{job=\"lingualink-backend\"}[5m])) by (status)",
           "refId": "A",
           "legendFormat": "{{status}}"
         }
@@ -727,7 +727,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "(sum(rate(http_requests_total{namespace=\"lingua-app\",app=\"lingualink-backend\",status=~\"5..\"}[5m])) / sum(rate(http_requests_total{job=\"lingua-app/lingualink-backend\"}[5m]))) * 100",
+          "expr": "(sum(rate(http_requests_total{job=\"lingualink-backend\",status=~\"5..\"}[5m])) / sum(rate(http_requests_total{job=\"lingualink-backend\"}[5m]))) * 100",
           "refId": "A"
         }
       ],
@@ -885,7 +885,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "up{namespace=\"lingua-app\",service=\"lingualink-backend\"}",
+          "expr": "up{job=\"lingualink-backend\"}",
           "refId": "A"
         }
       ],
@@ -1151,7 +1151,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{job=\"lingua-app/lingualink-backend\"} | json | level=~\"ERROR|CRITICAL\"",
+          "expr": "{namespace=\"lingua-app\",pod=~\"lingualink-backend.*\"} | json | level=~\"ERROR|CRITICAL\"",
           "refId": "A"
         }
       ],
@@ -1186,7 +1186,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{job=\"lingua-app/lingualink-backend\"} | json | __error__=\"\" | unwrap duration | duration > 1000",
+          "expr": "{namespace=\"lingua-app\",pod=~\"lingualink-backend.*\"} | json | __error__=\"\" | unwrap duration | duration > 1000",
           "refId": "A"
         }
       ],
@@ -1221,7 +1221,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{job=\"lingua-app/lingualink-backend\"}",
+          "expr": "{namespace=\"lingua-app\",pod=~\"lingualink-backend.*\"}",
           "refId": "A"
         }
       ],
