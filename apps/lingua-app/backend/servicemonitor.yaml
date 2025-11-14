@@ -5,21 +5,26 @@ metadata:
   namespace: lingua-app
   labels:
     app: lingualink-backend
-    release: prometheus
+    release: kube-prometheus-stack
 spec:
+  namespaceSelector:
+    matchNames:
+      - lingua-app
   selector:
     matchLabels:
       app: lingualink-backend
   endpoints:
-  - port: http
-    path: /metrics
-    interval: 30s
-    scrapeTimeout: 10s
-    honorLabels: true
-    relabelings:
-    - sourceLabels: [__meta_kubernetes_service_name]
-      targetLabel: service
-    - sourceLabels: [__meta_kubernetes_pod_name]
-      targetLabel: pod
-    - sourceLabels: [__meta_kubernetes_namespace]
-      targetLabel: namespace
+    - port: http
+      path: /metrics
+      interval: 30s
+      scrapeTimeout: 10s
+      honorLabels: true
+      relabelings:
+        - sourceLabels: [__meta_kubernetes_service_name]
+          targetLabel: service
+        - sourceLabels: [__meta_kubernetes_pod_name]
+          targetLabel: pod
+        - sourceLabels: [__meta_kubernetes_namespace]
+          targetLabel: namespace
+        - sourceLabels: [__meta_kubernetes_pod_label_app]
+          targetLabel: app

@@ -13,7 +13,9 @@
       "Bash(python3 -m py_compile:*)",
       "Bash(python3:*)",
       "Bash(pip install:*)",
-      "Bash(ruff format:*)"
+      "Bash(ruff format:*)",
+      "Bash(for f in *.json)",
+      "Bash(do echo \"=== $f ===\")"
     ],
     "deny": [],
     "ask": []
