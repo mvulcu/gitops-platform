@@ -10,7 +10,10 @@
       "Bash(kustomize build:*)",
       "Bash(kubectl kustomize:*)",
       "Bash(git commit:*)",
-      "Bash(python3 -m py_compile:*)"
+      "Bash(python3 -m py_compile:*)",
+      "Bash(python3:*)",
+      "Bash(pip install:*)",
+      "Bash(ruff format:*)"
     ],
     "deny": [],
     "ask": []
