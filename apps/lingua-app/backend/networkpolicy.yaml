@@ -10,20 +10,20 @@ spec:
   policyTypes:
     - Ingress
   ingress:
-    # Allow traffic from ingress controller (for API requests)
+    # 1) Allow traffic from ingress-nginx (incoming HTTP traffic from outside)
     - from:
         - namespaceSelector:
             matchLabels:
-              name: ingress-nginx
+              kubernetes.io/metadata.name: ingress-nginx
       ports:
         - protocol: TCP
           port: 8000
 
-    # Allow traffic from Prometheus (for metrics scraping)
+    # 2) Allow traffic from Prometheus (scrape /metrics)
     - from:
         - namespaceSelector:
             matchLabels:
-              name: monitoring
+              kubernetes.io/metadata.name: monitoring
           podSelector:
             matchLabels:
               app.kubernetes.io/name: prometheus
@@ -31,14 +31,14 @@ spec:
         - protocol: TCP
           port: 8000
 
-    # Allow traffic from within the same namespace (for internal communication)
+    # 3) Allow traffic from pods within the same namespace (internal calls)
     - from:
         - podSelector: {}
       ports:
         - protocol: TCP
           port: 8000
 ---
-# Egress policy - allow DNS and database
+# Egress policy - allow DNS, PostgreSQL и HTTPS наружу
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -51,7 +51,7 @@ spec:
   policyTypes:
     - Egress
   egress:
-    # Allow DNS
+    # 1) Allow DNS (CoreDNS in kube-system)
     - to:
         - namespaceSelector:
             matchLabels:
@@ -62,7 +62,7 @@ spec:
         - protocol: TCP
           port: 53
 
-    # Allow PostgreSQL
+    # 2) Allow PostgreSQL (statefulset postgres in lingua-app)
     - to:
         - podSelector:
             matchLabels:
@@ -71,7 +71,7 @@ spec:
         - protocol: TCP
           port: 5432
 
-    # Allow HTTPS for external APIs (Telegram)
+    # 3) Allow outgoing HTTPS (Telegram, external APIs)
     - to:
         - namespaceSelector: {}
       ports:
