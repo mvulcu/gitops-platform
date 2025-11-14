@@ -1,29 +1,32 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: lingua-app
+  name: lingualink-backend
   namespace: lingua-app
   annotations:
     kubernetes.io/ingress.class: nginx
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
     # Security: Limit request body size
-    nginx.ingress.kubernetes.io/proxy-body-size: "5m"
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
     # Security: Rate limiting
-    nginx.ingress.kubernetes.io/limit-rps: "50"
+    nginx.ingress.kubernetes.io/limit-rps: "100"
+    # Security: CORS headers (if needed)
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://lingua.cachefly.site"
 spec:
   ingressClassName: nginx
   tls:
   - hosts:
-    - lingua.cachefly.site
-    secretName: lingua-app-tls
+    - api.lingua.cachefly.site
+    secretName: lingualink-backend-tls
   rules:
-  - host: lingua.cachefly.site
+  - host: api.lingua.cachefly.site
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: lingua-app
+            name: lingualink-backend
             port:
               number: 80

@@ -1,0 +1,10 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: lingualink-backend-pdb
+  namespace: lingua-app
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: lingualink-backend

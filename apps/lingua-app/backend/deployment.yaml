@@ -1,0 +1,120 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lingualink-backend
+  namespace: lingua-app
+  labels:
+    app: lingualink-backend
+    component: api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: lingualink-backend
+  template:
+    metadata:
+      labels:
+        app: lingualink-backend
+        component: api
+    spec:
+      # Security: Pull secrets for private registry
+      imagePullSecrets:
+      - name: ghcr-creds
+
+      # Security: Run as non-root user
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+
+      containers:
+      - name: api
+        # Auto-updated by CI/CD on main branch pushes
+        image: ghcr.io/mvulcu/lingualink-api:main
+        imagePullPolicy: Always
+
+        ports:
+        - containerPort: 8000
+          name: http
+          protocol: TCP
+
+        # Security: Container-level security context
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false  # FastAPI needs write access for temp files
+          runAsNonRoot: true
+          runAsUser: 1000
+          capabilities:
+            drop:
+            - ALL
+
+        # Environment variables from ConfigMap
+        envFrom:
+        - configMapRef:
+            name: lingualink-backend-config
+
+        # Sensitive environment variables from Secret
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: lingualink-backend-secret
+              key: DATABASE_URL
+        - name: TELEGRAM_BOT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: lingualink-backend-secret
+              key: TELEGRAM_BOT_TOKEN
+        - name: TELEGRAM_WEBHOOK_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: lingualink-backend-secret
+              key: TELEGRAM_WEBHOOK_SECRET
+        - name: API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: lingualink-backend-secret
+              key: API_KEY
+
+        # Resource limits
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "1000m"
+
+        # Health checks
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8000
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+
+        # Startup probe for slow starts
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 8000
+            scheme: HTTP
+          initialDelaySeconds: 0
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 30
