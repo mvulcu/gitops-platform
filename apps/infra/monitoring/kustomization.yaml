@@ -4,4 +4,6 @@ resources:
   - namespace.yaml
   - helm-repository.yaml
   - helmrelease.yaml
+  - prometheus-rule-backend.yaml
+  - alertmanager-telegram-secret-template.yaml
   - dashboards

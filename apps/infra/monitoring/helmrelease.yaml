@@ -28,6 +28,56 @@ spec:
       prometheusSpec:
         retention: 7d
 
+    # Alertmanager configuration
+    alertmanager:
+      alertmanagerSpec:
+        storage:
+          volumeClaimTemplate:
+            spec:
+              accessModes: ["ReadWriteOnce"]
+              resources:
+                requests:
+                  storage: 1Gi
+        secrets:
+          - alertmanager-telegram
+      config:
+        global:
+          resolve_timeout: 5m
+        route:
+          group_by: ['alertname', 'severity', 'service']
+          group_wait: 10s
+          group_interval: 10s
+          repeat_interval: 4h
+          receiver: 'telegram'
+          routes:
+            - match:
+                severity: critical
+              receiver: 'telegram'
+              repeat_interval: 1h
+            - match:
+                severity: warning
+              receiver: 'telegram'
+              repeat_interval: 4h
+            - match:
+                severity: info
+              receiver: 'telegram'
+              repeat_interval: 12h
+        receivers:
+          - name: 'telegram'
+            telegram_configs:
+              - bot_token_file: /etc/alertmanager/secrets/alertmanager-telegram/bot-token
+                chat_id: 541762988
+                parse_mode: 'HTML'
+                message: |
+                  <b>🔔 {{ .Status | toUpper }}</b>
+                  {{ range .Alerts }}
+                  <b>Alert:</b> {{ .Labels.alertname }}
+                  <b>Severity:</b> {{ .Labels.severity }}
+                  <b>Service:</b> {{ .Labels.service }}
+                  <b>Summary:</b> {{ .Annotations.summary }}
+                  <b>Description:</b> {{ .Annotations.description }}
+                  {{ end }}
+
     grafana:
       adminUser: admin
       adminPassword: admin

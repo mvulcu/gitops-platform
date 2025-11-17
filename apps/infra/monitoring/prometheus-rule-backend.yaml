@@ -1,0 +1,138 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: lingualink-backend-alerts
+  namespace: monitoring
+  labels:
+    app: kube-prometheus-stack
+    release: kube-prometheus-stack
+spec:
+  groups:
+  - name: lingualink-backend
+    interval: 30s
+    rules:
+    # High 5xx Error Rate
+    - alert: BackendHighErrorRate
+      expr: |
+        (
+          sum(rate(http_requests_total{job="lingualink-backend",status=~"5.."}[5m]))
+          /
+          sum(rate(http_requests_total{job="lingualink-backend"}[5m]))
+        ) * 100 > 5
+      for: 5m
+      labels:
+        severity: critical
+        component: backend
+        service: lingualink-backend
+      annotations:
+        summary: "High 5xx error rate on LinguaLink Backend"
+        description: "Backend API has {{ $value | humanizePercentage }} 5xx errors (threshold: 5%)\nCurrent error rate is critical and requires immediate attention."
+
+    # High Latency (p95 > 1s)
+    - alert: BackendHighLatency
+      expr: |
+        histogram_quantile(0.95,
+          sum(rate(http_request_duration_seconds_bucket{job="lingualink-backend"}[5m])) by (le)
+        ) > 1
+      for: 5m
+      labels:
+        severity: warning
+        component: backend
+        service: lingualink-backend
+      annotations:
+        summary: "High latency on LinguaLink Backend"
+        description: "Backend API p95 latency is {{ $value | humanizeDuration }} (threshold: 1s)\nUsers may experience slow response times."
+
+    # Backend Down (metrics endpoint unreachable)
+    - alert: BackendDown
+      expr: up{job="lingualink-backend"} == 0
+      for: 2m
+      labels:
+        severity: critical
+        component: backend
+        service: lingualink-backend
+      annotations:
+        summary: "LinguaLink Backend is DOWN"
+        description: "Backend API metrics endpoint is unreachable for more than 2 minutes.\nService may be completely down!"
+
+    # No Backend Pods Running
+    - alert: BackendNoPodsRunning
+      expr: |
+        sum(kube_pod_status_phase{namespace="lingua-app",pod=~"lingualink-backend.*",phase="Running"}) == 0
+      for: 3m
+      labels:
+        severity: critical
+        component: backend
+        service: lingualink-backend
+      annotations:
+        summary: "No LinguaLink Backend pods running"
+        description: "All backend pods are down in lingua-app namespace.\nImmediate intervention required!"
+
+    # Failed Readiness Probes
+    - alert: BackendFailedReadinessProbes
+      expr: |
+        count(kube_pod_container_status_ready{namespace="lingua-app",pod=~"lingualink-backend.*"}==0) > 0
+      for: 3m
+      labels:
+        severity: warning
+        component: backend
+        service: lingualink-backend
+      annotations:
+        summary: "Backend pods failing readiness probes"
+        description: "{{ $value }} backend pod(s) are failing readiness checks.\nPods may not be able to serve traffic."
+
+    # High Memory Usage
+    - alert: BackendHighMemoryUsage
+      expr: |
+        avg(
+          container_memory_working_set_bytes{namespace="lingua-app",pod=~"lingualink-backend.*",container!=""}
+          /
+          container_spec_memory_limit_bytes{namespace="lingua-app",pod=~"lingualink-backend.*",container!=""}
+        ) * 100 > 85
+      for: 10m
+      labels:
+        severity: warning
+        component: backend
+        service: lingualink-backend
+      annotations:
+        summary: "Backend high memory usage"
+        description: "Backend pods are using {{ $value | humanizePercentage }} of memory limit (threshold: 85%)\nMay lead to OOMKill soon."
+
+    # High CPU Usage
+    - alert: BackendHighCPUUsage
+      expr: |
+        avg(rate(container_cpu_usage_seconds_total{namespace="lingua-app",pod=~"lingualink-backend.*",container!=""}[5m])) * 100 > 80
+      for: 10m
+      labels:
+        severity: warning
+        component: backend
+        service: lingualink-backend
+      annotations:
+        summary: "Backend high CPU usage"
+        description: "Backend pods are using {{ $value | humanizePercentage }} CPU (threshold: 80%)\nPerformance may be degraded."
+
+    # Pod Restarts
+    - alert: BackendPodRestarting
+      expr: |
+        rate(kube_pod_container_status_restarts_total{namespace="lingua-app",pod=~"lingualink-backend.*"}[15m]) > 0
+      for: 5m
+      labels:
+        severity: warning
+        component: backend
+        service: lingualink-backend
+      annotations:
+        summary: "Backend pod is restarting"
+        description: "Backend pod {{ $labels.pod }} has restarted {{ $value }} times in the last 15 minutes.\nCheck pod logs for crash reasons."
+
+    # Low Request Rate (possible issue)
+    - alert: BackendLowTraffic
+      expr: |
+        sum(rate(http_requests_total{job="lingualink-backend"}[5m])) < 0.01
+      for: 30m
+      labels:
+        severity: info
+        component: backend
+        service: lingualink-backend
+      annotations:
+        summary: "Backend receiving very low traffic"
+        description: "Backend API is receiving less than 1 request per 100 seconds for 30+ minutes.\nThis might be normal or indicate a routing issue."
