@@ -389,6 +389,49 @@ kubectl get prometheusrules -n monitoring
 kubectl get prometheusrules -n monitoring -o yaml
 ```
 
+### LinguaLink Backend Alerts
+
+Custom PrometheusRule configured for LinguaLink Backend monitoring with 9 alert rules:
+
+#### Critical Alerts (repeat: 1 hour)
+
+| Alert Name | Condition | Duration | Description |
+|------------|-----------|----------|-------------|
+| **BackendHighErrorRate** | 5xx errors > 5% | 5 minutes | High rate of server errors requiring immediate attention |
+| **BackendDown** | `up{job="lingualink-backend"} == 0` | 2 minutes | Backend metrics endpoint unreachable - service may be down |
+| **BackendNoPodsRunning** | Running pods == 0 | 3 minutes | All backend pods are down - immediate intervention required |
+
+#### Warning Alerts (repeat: 4 hours)
+
+| Alert Name | Condition | Duration | Description |
+|------------|-----------|----------|-------------|
+| **BackendHighLatency** | p95 latency > 1s | 5 minutes | Users experiencing slow response times |
+| **BackendFailedReadinessProbes** | Ready pods == 0 | 3 minutes | Pods failing readiness checks - may not serve traffic |
+| **BackendHighMemoryUsage** | Memory usage > 85% | 10 minutes | Risk of OOMKill - may need scaling |
+| **BackendHighCPUUsage** | CPU usage > 80% | 10 minutes | Performance may be degraded |
+| **BackendPodRestarting** | Restarts > 0 in 15min | 5 minutes | Pod instability - check logs for crash reasons |
+
+#### Info Alerts (repeat: 12 hours)
+
+| Alert Name | Condition | Duration | Description |
+|------------|-----------|----------|-------------|
+| **BackendLowTraffic** | RPS < 0.01 | 30 minutes | Very low traffic - may indicate routing issue |
+
+**Alert File Location**: `/mnt/d/Projects/gitops-platform/apps/infra/monitoring/prometheus-rule-backend.yaml`
+
+**Key Queries Used**:
+```promql
+# Error rate calculation
+(sum(rate(http_requests_total{job="lingualink-backend",status=~"5.."}[5m]))
+ / sum(rate(http_requests_total{job="lingualink-backend"}[5m]))) * 100
+
+# Latency monitoring
+histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job="lingualink-backend"}[5m])) by (le))
+
+# Backend availability
+up{job="lingualink-backend"}
+```
+
 ### Silencing Alerts
 
 Temporary alert silencing (useful during maintenance):
@@ -476,63 +519,121 @@ kube_horizontalpodautoscaler_status_current_replicas{namespace="lingua-app"}
 
 ---
 
-## 🔔 Setting Up Alert Notifications
+## 🔔 Alert Notifications
 
-### Slack Integration
+### Telegram Integration (Configured)
 
-1. **Create Slack Webhook**:
-   - Go to Slack → Apps → Incoming Webhooks
-   - Choose channel (e.g., #alerts)
-   - Copy webhook URL
+LinguaLink Backend alerts are configured to send notifications to Telegram.
 
-2. **Edit Alertmanager ConfigMap**:
+#### Configuration Overview
 
-```bash
-kubectl edit configmap alertmanager-kube-prometheus-stack-alertmanager -n monitoring
-```
+**Bot**: `@myTgObsidianbest_bot`
+**Chat ID**: `541762988`
+**Secret**: `alertmanager-telegram` (namespace: monitoring)
 
-Add receiver configuration:
+#### Alert Routing Rules
 
 ```yaml
-receivers:
-- name: 'slack-notifications'
-  slack_configs:
-  - api_url: 'https://hooks.slack.com/services/YOUR/WEBHOOK/URL'
-    channel: '#alerts'
-    title: '{{ .GroupLabels.alertname }}'
-    text: '{{ range .Alerts }}{{ .Annotations.description }}{{ end }}'
-
 route:
-  group_by: ['alertname', 'cluster']
+  group_by: ['alertname', 'severity', 'service']
   group_wait: 10s
   group_interval: 10s
-  repeat_interval: 12h
-  receiver: 'slack-notifications'
+  repeat_interval: 4h
+  receiver: 'telegram'
   routes:
-  - match:
-      severity: critical
-    receiver: 'slack-notifications'
+    - match:
+        severity: critical
+      receiver: 'telegram'
+      repeat_interval: 1h      # Critical alerts repeat every hour
+    - match:
+        severity: warning
+      receiver: 'telegram'
+      repeat_interval: 4h      # Warning alerts repeat every 4 hours
+    - match:
+        severity: info
+      receiver: 'telegram'
+      repeat_interval: 12h     # Info alerts repeat every 12 hours
 ```
 
-3. **Reload Alertmanager**:
+#### Message Format
+
+Alerts are sent in HTML format with emoji indicators:
+
+```
+🔔 FIRING
+
+Alert: BackendHighErrorRate
+Severity: critical
+Service: lingualink-backend
+Summary: High 5xx error rate on LinguaLink Backend
+Description: Backend API has 7.3% 5xx errors (threshold: 5%)
+Current error rate is critical and requires immediate attention.
+```
+
+#### Testing Alerts
+
+To manually trigger an alert for testing:
 
 ```bash
-kubectl rollout restart statefulset alertmanager-kube-prometheus-stack-alertmanager -n monitoring
+# Trigger BackendNoPodsRunning alert
+kubectl scale deployment lingualink-backend -n lingua-app --replicas=0
+
+# Wait 3 minutes for alert to fire
+# Check Alertmanager UI to see the alert
+kubectl port-forward -n monitoring svc/kube-prometheus-stack-alertmanager 9093:9093
+
+# Restore service
+kubectl scale deployment lingualink-backend -n lingua-app --replicas=1
 ```
 
-### Email Integration
+#### Configuration Files
 
-Similar process with SMTP configuration:
+- **HelmRelease**: `/mnt/d/Projects/gitops-platform/apps/infra/monitoring/helmrelease.yaml`
+- **Secret Template**: `/mnt/d/Projects/gitops-platform/apps/infra/monitoring/alertmanager-telegram-secret-template.yaml`
+- **PrometheusRule**: `/mnt/d/Projects/gitops-platform/apps/infra/monitoring/prometheus-rule-backend.yaml`
+
+#### Troubleshooting Telegram Notifications
+
+**If alerts not arriving:**
+
+1. **Check Alertmanager logs**:
+```bash
+kubectl logs -n monitoring alertmanager-kube-prometheus-stack-alertmanager-0 | grep telegram
+```
+
+2. **Verify secret is mounted**:
+```bash
+kubectl get secret alertmanager-telegram -n monitoring
+kubectl describe pod alertmanager-kube-prometheus-stack-alertmanager-0 -n monitoring | grep alertmanager-telegram
+```
+
+3. **Test bot token manually**:
+```bash
+curl -X GET "https://api.telegram.org/bot<YOUR_BOT_TOKEN>/getMe"
+```
+
+4. **Check Alertmanager config**:
+```bash
+kubectl port-forward -n monitoring svc/kube-prometheus-stack-alertmanager 9093:9093
+# Visit http://localhost:9093/#/status - check config is loaded
+```
+
+### Adding Other Notification Channels
+
+To add Slack, Email, PagerDuty, or other receivers, edit the Alertmanager configuration in `helmrelease.yaml`:
 
 ```yaml
 receivers:
-- name: 'email-notifications'
-  email_configs:
-  - to: 'devops@company.com'
-    from: 'alertmanager@company.com'
-    smarthost: 'smtp.gmail.com:587'
-    auth_username: 'alerts@company.com'
-    auth_password: 'app-password-here'
+  - name: 'telegram'
+    telegram_configs:
+      - bot_token_file: /etc/alertmanager/secrets/alertmanager-telegram/bot-token
+        chat_id: 541762988
+
+  # Add additional receivers here
+  - name: 'slack'
+    slack_configs:
+      - api_url: 'https://hooks.slack.com/services/YOUR/WEBHOOK'
+        channel: '#alerts'
 ```
 
 ---
