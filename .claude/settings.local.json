@@ -6,7 +6,8 @@
       "Bash(git cherry-pick:*)",
       "Bash(kubectl create secret generic:*)",
       "Bash(kubeseal:*)",
-      "Bash(kubectl get:*)"
+      "Bash(kubectl get:*)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []
