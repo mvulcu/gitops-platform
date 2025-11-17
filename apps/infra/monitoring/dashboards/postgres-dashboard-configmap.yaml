@@ -1,0 +1,310 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-postgres
+  namespace: monitoring
+  labels:
+    grafana_dashboard: '1'
+data:
+  postgres-dashboard.json: "{\n  \"annotations\": {\n    \"list\": []\n  },\n  \"\
+    editable\": true,\n  \"fiscalYearStartMonth\": 0,\n  \"graphTooltip\": 1,\n  \"\
+    id\": null,\n  \"links\": [],\n  \"panels\": [\n    {\n      \"collapsed\": false,\n\
+    \      \"gridPos\": {\n        \"h\": 1,\n        \"w\": 24,\n        \"x\": 0,\n\
+    \        \"y\": 0\n      },\n      \"id\": 100,\n      \"title\": \"Database Status\"\
+    ,\n      \"type\": \"row\"\n    },\n    {\n      \"datasource\": {\n        \"\
+    type\": \"prometheus\",\n        \"uid\": \"prometheus\"\n      },\n      \"fieldConfig\"\
+    : {\n        \"defaults\": {\n          \"color\": {\n            \"mode\": \"\
+    thresholds\"\n          },\n          \"mappings\": [\n            {\n       \
+    \       \"options\": {\n                \"0\": {\n                  \"color\"\
+    : \"red\",\n                  \"text\": \"DOWN\"\n                },\n       \
+    \         \"1\": {\n                  \"color\": \"green\",\n                \
+    \  \"text\": \"UP\"\n                }\n              },\n              \"type\"\
+    : \"value\"\n            }\n          ],\n          \"thresholds\": {\n      \
+    \      \"mode\": \"absolute\",\n            \"steps\": [\n              {\"color\"\
+    : \"red\", \"value\": null},\n              {\"color\": \"green\", \"value\":\
+    \ 1}\n            ]\n          }\n        }\n      },\n      \"gridPos\": {\n\
+    \        \"h\": 4,\n        \"w\": 4,\n        \"x\": 0,\n        \"y\": 1\n \
+    \     },\n      \"id\": 1,\n      \"options\": {\n        \"colorMode\": \"background\"\
+    ,\n        \"graphMode\": \"none\",\n        \"justifyMode\": \"center\",\n  \
+    \      \"orientation\": \"auto\",\n        \"reduceOptions\": {\n          \"\
+    calcs\": [\"lastNotNull\"],\n          \"fields\": \"\",\n          \"values\"\
+    : false\n        },\n        \"textMode\": \"value\"\n      },\n      \"pluginVersion\"\
+    : \"10.0.0\",\n      \"targets\": [\n        {\n          \"datasource\": {\"\
+    type\": \"prometheus\", \"uid\": \"prometheus\"},\n          \"expr\": \"pg_up{job=\\\
+    \"postgres\\\"}\",\n          \"refId\": \"A\"\n        }\n      ],\n      \"\
+    title\": \"PostgreSQL Status\",\n      \"type\": \"stat\"\n    },\n    {\n   \
+    \   \"datasource\": {\n        \"type\": \"prometheus\",\n        \"uid\": \"\
+    prometheus\"\n      },\n      \"fieldConfig\": {\n        \"defaults\": {\n  \
+    \        \"color\": {\"mode\": \"thresholds\"},\n          \"thresholds\": {\n\
+    \            \"mode\": \"absolute\",\n            \"steps\": [\n             \
+    \ {\"color\": \"green\", \"value\": null},\n              {\"color\": \"yellow\"\
+    , \"value\": 50},\n              {\"color\": \"red\", \"value\": 80}\n       \
+    \     ]\n          },\n          \"unit\": \"short\"\n        }\n      },\n  \
+    \    \"gridPos\": {\n        \"h\": 4,\n        \"w\": 4,\n        \"x\": 4,\n\
+    \        \"y\": 1\n      },\n      \"id\": 2,\n      \"options\": {\n        \"\
+    colorMode\": \"value\",\n        \"graphMode\": \"area\",\n        \"justifyMode\"\
+    : \"center\",\n        \"orientation\": \"auto\",\n        \"reduceOptions\":\
+    \ {\n          \"calcs\": [\"lastNotNull\"],\n          \"fields\": \"\",\n  \
+    \        \"values\": false\n        },\n        \"textMode\": \"value_and_name\"\
+    \n      },\n      \"pluginVersion\": \"10.0.0\",\n      \"targets\": [\n     \
+    \   {\n          \"datasource\": {\"type\": \"prometheus\", \"uid\": \"prometheus\"\
+    },\n          \"expr\": \"sum(pg_stat_activity_count{job=\\\"postgres\\\"})\"\
+    ,\n          \"refId\": \"A\"\n        }\n      ],\n      \"title\": \"Active\
+    \ Connections\",\n      \"type\": \"stat\"\n    },\n    {\n      \"datasource\"\
+    : {\n        \"type\": \"prometheus\",\n        \"uid\": \"prometheus\"\n    \
+    \  },\n      \"fieldConfig\": {\n        \"defaults\": {\n          \"color\"\
+    : {\"mode\": \"thresholds\"},\n          \"thresholds\": {\n            \"mode\"\
+    : \"percentage\",\n            \"steps\": [\n              {\"color\": \"green\"\
+    , \"value\": null},\n              {\"color\": \"yellow\", \"value\": 80},\n \
+    \             {\"color\": \"red\", \"value\": 90}\n            ]\n          },\n\
+    \          \"unit\": \"percent\",\n          \"max\": 100,\n          \"min\"\
+    : 0\n        }\n      },\n      \"gridPos\": {\n        \"h\": 4,\n        \"\
+    w\": 4,\n        \"x\": 8,\n        \"y\": 1\n      },\n      \"id\": 3,\n   \
+    \   \"options\": {\n        \"colorMode\": \"value\",\n        \"graphMode\":\
+    \ \"area\",\n        \"justifyMode\": \"center\",\n        \"orientation\": \"\
+    auto\",\n        \"reduceOptions\": {\n          \"calcs\": [\"lastNotNull\"],\n\
+    \          \"fields\": \"\",\n          \"values\": false\n        },\n      \
+    \  \"textMode\": \"value_and_name\"\n      },\n      \"pluginVersion\": \"10.0.0\"\
+    ,\n      \"targets\": [\n        {\n          \"datasource\": {\"type\": \"prometheus\"\
+    , \"uid\": \"prometheus\"},\n          \"expr\": \"(sum(pg_stat_activity_count{job=\\\
+    \"postgres\\\"}) / pg_settings_max_connections{job=\\\"postgres\\\"}) * 100\"\
+    ,\n          \"refId\": \"A\"\n        }\n      ],\n      \"title\": \"Connection\
+    \ Usage\",\n      \"type\": \"stat\"\n    },\n    {\n      \"datasource\": {\n\
+    \        \"type\": \"prometheus\",\n        \"uid\": \"prometheus\"\n      },\n\
+    \      \"fieldConfig\": {\n        \"defaults\": {\n          \"color\": {\"mode\"\
+    : \"thresholds\"},\n          \"thresholds\": {\n            \"mode\": \"percentage\"\
+    ,\n            \"steps\": [\n              {\"color\": \"red\", \"value\": null},\n\
+    \              {\"color\": \"yellow\", \"value\": 85},\n              {\"color\"\
+    : \"green\", \"value\": 95}\n            ]\n          },\n          \"unit\":\
+    \ \"percent\",\n          \"max\": 100,\n          \"min\": 0\n        }\n   \
+    \   },\n      \"gridPos\": {\n        \"h\": 4,\n        \"w\": 4,\n        \"\
+    x\": 12,\n        \"y\": 1\n      },\n      \"id\": 4,\n      \"options\": {\n\
+    \        \"colorMode\": \"value\",\n        \"graphMode\": \"area\",\n       \
+    \ \"justifyMode\": \"center\",\n        \"orientation\": \"auto\",\n        \"\
+    reduceOptions\": {\n          \"calcs\": [\"lastNotNull\"],\n          \"fields\"\
+    : \"\",\n          \"values\": false\n        },\n        \"textMode\": \"value_and_name\"\
+    \n      },\n      \"pluginVersion\": \"10.0.0\",\n      \"targets\": [\n     \
+    \   {\n          \"datasource\": {\"type\": \"prometheus\", \"uid\": \"prometheus\"\
+    },\n          \"expr\": \"(pg_stat_database_blks_hit{job=\\\"postgres\\\",datname=\\\
+    \"lingualink\\\"} / (pg_stat_database_blks_hit{job=\\\"postgres\\\",datname=\\\
+    \"lingualink\\\"} + pg_stat_database_blks_read{job=\\\"postgres\\\",datname=\\\
+    \"lingualink\\\"})) * 100\",\n          \"refId\": \"A\"\n        }\n      ],\n\
+    \      \"title\": \"Cache Hit Ratio\",\n      \"type\": \"stat\"\n    },\n   \
+    \ {\n      \"datasource\": {\n        \"type\": \"prometheus\",\n        \"uid\"\
+    : \"prometheus\"\n      },\n      \"fieldConfig\": {\n        \"defaults\": {\n\
+    \          \"color\": {\"mode\": \"palette-classic\"},\n          \"custom\":\
+    \ {\n            \"axisCenteredZero\": false,\n            \"axisColorMode\":\
+    \ \"text\",\n            \"axisLabel\": \"bytes\",\n            \"axisPlacement\"\
+    : \"auto\",\n            \"barAlignment\": 0,\n            \"drawStyle\": \"line\"\
+    ,\n            \"fillOpacity\": 10,\n            \"gradientMode\": \"none\",\n\
+    \            \"hideFrom\": {\n              \"tooltip\": false,\n            \
+    \  \"viz\": false,\n              \"legend\": false\n            },\n        \
+    \    \"lineInterpolation\": \"smooth\",\n            \"lineWidth\": 2,\n     \
+    \       \"pointSize\": 5,\n            \"scaleDistribution\": {\"type\": \"linear\"\
+    },\n            \"showPoints\": \"never\",\n            \"spanNulls\": false,\n\
+    \            \"stacking\": {\"mode\": \"none\", \"group\": \"A\"},\n         \
+    \   \"thresholdsStyle\": {\"mode\": \"off\"}\n          },\n          \"unit\"\
+    : \"bytes\"\n        }\n      },\n      \"gridPos\": {\n        \"h\": 4,\n  \
+    \      \"w\": 8,\n        \"x\": 16,\n        \"y\": 1\n      },\n      \"id\"\
+    : 5,\n      \"options\": {\n        \"legend\": {\n          \"calcs\": [\"lastNotNull\"\
+    ],\n          \"displayMode\": \"list\",\n          \"placement\": \"bottom\"\
+    ,\n          \"showLegend\": true\n        },\n        \"tooltip\": {\"mode\"\
+    : \"multi\", \"sort\": \"none\"}\n      },\n      \"pluginVersion\": \"10.0.0\"\
+    ,\n      \"targets\": [\n        {\n          \"datasource\": {\"type\": \"prometheus\"\
+    , \"uid\": \"prometheus\"},\n          \"expr\": \"pg_database_size_bytes{job=\\\
+    \"postgres\\\",datname=\\\"lingualink\\\"}\",\n          \"legendFormat\": \"\
+    Database Size\",\n          \"refId\": \"A\"\n        }\n      ],\n      \"title\"\
+    : \"Database Size\",\n      \"type\": \"timeseries\"\n    },\n    {\n      \"\
+    collapsed\": false,\n      \"gridPos\": {\n        \"h\": 1,\n        \"w\": 24,\n\
+    \        \"x\": 0,\n        \"y\": 5\n      },\n      \"id\": 101,\n      \"title\"\
+    : \"Transactions & Queries\",\n      \"type\": \"row\"\n    },\n    {\n      \"\
+    datasource\": {\n        \"type\": \"prometheus\",\n        \"uid\": \"prometheus\"\
+    \n      },\n      \"fieldConfig\": {\n        \"defaults\": {\n          \"color\"\
+    : {\"mode\": \"palette-classic\"},\n          \"custom\": {\n            \"axisCenteredZero\"\
+    : false,\n            \"axisColorMode\": \"text\",\n            \"axisLabel\"\
+    : \"txn/sec\",\n            \"axisPlacement\": \"auto\",\n            \"barAlignment\"\
+    : 0,\n            \"drawStyle\": \"line\",\n            \"fillOpacity\": 10,\n\
+    \            \"gradientMode\": \"none\",\n            \"hideFrom\": {\n      \
+    \        \"tooltip\": false,\n              \"viz\": false,\n              \"\
+    legend\": false\n            },\n            \"lineInterpolation\": \"smooth\"\
+    ,\n            \"lineWidth\": 2,\n            \"pointSize\": 5,\n            \"\
+    scaleDistribution\": {\"type\": \"linear\"},\n            \"showPoints\": \"never\"\
+    ,\n            \"spanNulls\": false,\n            \"stacking\": {\"mode\": \"\
+    none\", \"group\": \"A\"},\n            \"thresholdsStyle\": {\"mode\": \"off\"\
+    }\n          },\n          \"unit\": \"short\"\n        }\n      },\n      \"\
+    gridPos\": {\n        \"h\": 8,\n        \"w\": 12,\n        \"x\": 0,\n     \
+    \   \"y\": 6\n      },\n      \"id\": 6,\n      \"options\": {\n        \"legend\"\
+    : {\n          \"calcs\": [\"lastNotNull\", \"mean\"],\n          \"displayMode\"\
+    : \"table\",\n          \"placement\": \"bottom\",\n          \"showLegend\":\
+    \ true\n        },\n        \"tooltip\": {\"mode\": \"multi\", \"sort\": \"none\"\
+    }\n      },\n      \"pluginVersion\": \"10.0.0\",\n      \"targets\": [\n    \
+    \    {\n          \"datasource\": {\"type\": \"prometheus\", \"uid\": \"prometheus\"\
+    },\n          \"expr\": \"rate(pg_stat_database_xact_commit{job=\\\"postgres\\\
+    \",datname=\\\"lingualink\\\"}[5m])\",\n          \"legendFormat\": \"Commits\"\
+    ,\n          \"refId\": \"A\"\n        },\n        {\n          \"datasource\"\
+    : {\"type\": \"prometheus\", \"uid\": \"prometheus\"},\n          \"expr\": \"\
+    rate(pg_stat_database_xact_rollback{job=\\\"postgres\\\",datname=\\\"lingualink\\\
+    \"}[5m])\",\n          \"legendFormat\": \"Rollbacks\",\n          \"refId\":\
+    \ \"B\"\n        }\n      ],\n      \"title\": \"Transaction Rate\",\n      \"\
+    type\": \"timeseries\"\n    },\n    {\n      \"datasource\": {\n        \"type\"\
+    : \"prometheus\",\n        \"uid\": \"prometheus\"\n      },\n      \"fieldConfig\"\
+    : {\n        \"defaults\": {\n          \"color\": {\"mode\": \"palette-classic\"\
+    },\n          \"custom\": {\n            \"axisCenteredZero\": false,\n      \
+    \      \"axisColorMode\": \"text\",\n            \"axisLabel\": \"queries/sec\"\
+    ,\n            \"axisPlacement\": \"auto\",\n            \"barAlignment\": 0,\n\
+    \            \"drawStyle\": \"line\",\n            \"fillOpacity\": 10,\n    \
+    \        \"gradientMode\": \"none\",\n            \"hideFrom\": {\n          \
+    \    \"tooltip\": false,\n              \"viz\": false,\n              \"legend\"\
+    : false\n            },\n            \"lineInterpolation\": \"smooth\",\n    \
+    \        \"lineWidth\": 2,\n            \"pointSize\": 5,\n            \"scaleDistribution\"\
+    : {\"type\": \"linear\"},\n            \"showPoints\": \"never\",\n          \
+    \  \"spanNulls\": false,\n            \"stacking\": {\"mode\": \"none\", \"group\"\
+    : \"A\"},\n            \"thresholdsStyle\": {\"mode\": \"off\"}\n          },\n\
+    \          \"unit\": \"short\"\n        }\n      },\n      \"gridPos\": {\n  \
+    \      \"h\": 8,\n        \"w\": 12,\n        \"x\": 12,\n        \"y\": 6\n \
+    \     },\n      \"id\": 7,\n      \"options\": {\n        \"legend\": {\n    \
+    \      \"calcs\": [\"lastNotNull\", \"mean\"],\n          \"displayMode\": \"\
+    table\",\n          \"placement\": \"bottom\",\n          \"showLegend\": true\n\
+    \        },\n        \"tooltip\": {\"mode\": \"multi\", \"sort\": \"none\"}\n\
+    \      },\n      \"pluginVersion\": \"10.0.0\",\n      \"targets\": [\n      \
+    \  {\n          \"datasource\": {\"type\": \"prometheus\", \"uid\": \"prometheus\"\
+    },\n          \"expr\": \"rate(pg_stat_database_tup_inserted{job=\\\"postgres\\\
+    \",datname=\\\"lingualink\\\"}[5m])\",\n          \"legendFormat\": \"Inserts\"\
+    ,\n          \"refId\": \"A\"\n        },\n        {\n          \"datasource\"\
+    : {\"type\": \"prometheus\", \"uid\": \"prometheus\"},\n          \"expr\": \"\
+    rate(pg_stat_database_tup_updated{job=\\\"postgres\\\",datname=\\\"lingualink\\\
+    \"}[5m])\",\n          \"legendFormat\": \"Updates\",\n          \"refId\": \"\
+    B\"\n        },\n        {\n          \"datasource\": {\"type\": \"prometheus\"\
+    , \"uid\": \"prometheus\"},\n          \"expr\": \"rate(pg_stat_database_tup_deleted{job=\\\
+    \"postgres\\\",datname=\\\"lingualink\\\"}[5m])\",\n          \"legendFormat\"\
+    : \"Deletes\",\n          \"refId\": \"C\"\n        },\n        {\n          \"\
+    datasource\": {\"type\": \"prometheus\", \"uid\": \"prometheus\"},\n         \
+    \ \"expr\": \"rate(pg_stat_database_tup_fetched{job=\\\"postgres\\\",datname=\\\
+    \"lingualink\\\"}[5m])\",\n          \"legendFormat\": \"Fetched\",\n        \
+    \  \"refId\": \"D\"\n        }\n      ],\n      \"title\": \"Tuple Operations\"\
+    ,\n      \"type\": \"timeseries\"\n    },\n    {\n      \"collapsed\": false,\n\
+    \      \"gridPos\": {\n        \"h\": 1,\n        \"w\": 24,\n        \"x\": 0,\n\
+    \        \"y\": 14\n      },\n      \"id\": 102,\n      \"title\": \"Connections\
+    \ & Locks\",\n      \"type\": \"row\"\n    },\n    {\n      \"datasource\": {\n\
+    \        \"type\": \"prometheus\",\n        \"uid\": \"prometheus\"\n      },\n\
+    \      \"fieldConfig\": {\n        \"defaults\": {\n          \"color\": {\"mode\"\
+    : \"palette-classic\"},\n          \"custom\": {\n            \"axisCenteredZero\"\
+    : false,\n            \"axisColorMode\": \"text\",\n            \"axisLabel\"\
+    : \"connections\",\n            \"axisPlacement\": \"auto\",\n            \"barAlignment\"\
+    : 0,\n            \"drawStyle\": \"line\",\n            \"fillOpacity\": 10,\n\
+    \            \"gradientMode\": \"none\",\n            \"hideFrom\": {\n      \
+    \        \"tooltip\": false,\n              \"viz\": false,\n              \"\
+    legend\": false\n            },\n            \"lineInterpolation\": \"smooth\"\
+    ,\n            \"lineWidth\": 2,\n            \"pointSize\": 5,\n            \"\
+    scaleDistribution\": {\"type\": \"linear\"},\n            \"showPoints\": \"never\"\
+    ,\n            \"spanNulls\": false,\n            \"stacking\": {\"mode\": \"\
+    normal\", \"group\": \"A\"},\n            \"thresholdsStyle\": {\"mode\": \"off\"\
+    }\n          },\n          \"unit\": \"short\"\n        }\n      },\n      \"\
+    gridPos\": {\n        \"h\": 8,\n        \"w\": 12,\n        \"x\": 0,\n     \
+    \   \"y\": 15\n      },\n      \"id\": 8,\n      \"options\": {\n        \"legend\"\
+    : {\n          \"calcs\": [\"lastNotNull\"],\n          \"displayMode\": \"table\"\
+    ,\n          \"placement\": \"bottom\",\n          \"showLegend\": true\n    \
+    \    },\n        \"tooltip\": {\"mode\": \"multi\", \"sort\": \"none\"}\n    \
+    \  },\n      \"pluginVersion\": \"10.0.0\",\n      \"targets\": [\n        {\n\
+    \          \"datasource\": {\"type\": \"prometheus\", \"uid\": \"prometheus\"\
+    },\n          \"expr\": \"pg_stat_activity_count{job=\\\"postgres\\\",state=\\\
+    \"active\\\"}\",\n          \"legendFormat\": \"Active\",\n          \"refId\"\
+    : \"A\"\n        },\n        {\n          \"datasource\": {\"type\": \"prometheus\"\
+    , \"uid\": \"prometheus\"},\n          \"expr\": \"pg_stat_activity_count{job=\\\
+    \"postgres\\\",state=\\\"idle\\\"}\",\n          \"legendFormat\": \"Idle\",\n\
+    \          \"refId\": \"B\"\n        },\n        {\n          \"datasource\":\
+    \ {\"type\": \"prometheus\", \"uid\": \"prometheus\"},\n          \"expr\": \"\
+    pg_stat_activity_count{job=\\\"postgres\\\",state=\\\"idle in transaction\\\"\
+    }\",\n          \"legendFormat\": \"Idle in Transaction\",\n          \"refId\"\
+    : \"C\"\n        }\n      ],\n      \"title\": \"Connections by State\",\n   \
+    \   \"type\": \"timeseries\"\n    },\n    {\n      \"datasource\": {\n       \
+    \ \"type\": \"prometheus\",\n        \"uid\": \"prometheus\"\n      },\n     \
+    \ \"fieldConfig\": {\n        \"defaults\": {\n          \"color\": {\"mode\"\
+    : \"palette-classic\"},\n          \"custom\": {\n            \"axisCenteredZero\"\
+    : false,\n            \"axisColorMode\": \"text\",\n            \"axisLabel\"\
+    : \"locks\",\n            \"axisPlacement\": \"auto\",\n            \"barAlignment\"\
+    : 0,\n            \"drawStyle\": \"line\",\n            \"fillOpacity\": 10,\n\
+    \            \"gradientMode\": \"none\",\n            \"hideFrom\": {\n      \
+    \        \"tooltip\": false,\n              \"viz\": false,\n              \"\
+    legend\": false\n            },\n            \"lineInterpolation\": \"smooth\"\
+    ,\n            \"lineWidth\": 2,\n            \"pointSize\": 5,\n            \"\
+    scaleDistribution\": {\"type\": \"linear\"},\n            \"showPoints\": \"never\"\
+    ,\n            \"spanNulls\": false,\n            \"stacking\": {\"mode\": \"\
+    none\", \"group\": \"A\"},\n            \"thresholdsStyle\": {\"mode\": \"off\"\
+    }\n          },\n          \"unit\": \"short\"\n        }\n      },\n      \"\
+    gridPos\": {\n        \"h\": 8,\n        \"w\": 12,\n        \"x\": 12,\n    \
+    \    \"y\": 15\n      },\n      \"id\": 9,\n      \"options\": {\n        \"legend\"\
+    : {\n          \"calcs\": [\"lastNotNull\", \"max\"],\n          \"displayMode\"\
+    : \"table\",\n          \"placement\": \"bottom\",\n          \"showLegend\":\
+    \ true\n        },\n        \"tooltip\": {\"mode\": \"multi\", \"sort\": \"none\"\
+    }\n      },\n      \"pluginVersion\": \"10.0.0\",\n      \"targets\": [\n    \
+    \    {\n          \"datasource\": {\"type\": \"prometheus\", \"uid\": \"prometheus\"\
+    },\n          \"expr\": \"sum(pg_locks_count{job=\\\"postgres\\\"})\",\n     \
+    \     \"legendFormat\": \"Total Locks\",\n          \"refId\": \"A\"\n       \
+    \ }\n      ],\n      \"title\": \"Database Locks\",\n      \"type\": \"timeseries\"\
+    \n    },\n    {\n      \"collapsed\": false,\n      \"gridPos\": {\n        \"\
+    h\": 1,\n        \"w\": 24,\n        \"x\": 0,\n        \"y\": 23\n      },\n\
+    \      \"id\": 103,\n      \"title\": \"I/O & Performance\",\n      \"type\":\
+    \ \"row\"\n    },\n    {\n      \"datasource\": {\n        \"type\": \"prometheus\"\
+    ,\n        \"uid\": \"prometheus\"\n      },\n      \"fieldConfig\": {\n     \
+    \   \"defaults\": {\n          \"color\": {\"mode\": \"palette-classic\"},\n \
+    \         \"custom\": {\n            \"axisCenteredZero\": false,\n          \
+    \  \"axisColorMode\": \"text\",\n            \"axisLabel\": \"blocks/sec\",\n\
+    \            \"axisPlacement\": \"auto\",\n            \"barAlignment\": 0,\n\
+    \            \"drawStyle\": \"line\",\n            \"fillOpacity\": 10,\n    \
+    \        \"gradientMode\": \"none\",\n            \"hideFrom\": {\n          \
+    \    \"tooltip\": false,\n              \"viz\": false,\n              \"legend\"\
+    : false\n            },\n            \"lineInterpolation\": \"smooth\",\n    \
+    \        \"lineWidth\": 2,\n            \"pointSize\": 5,\n            \"scaleDistribution\"\
+    : {\"type\": \"linear\"},\n            \"showPoints\": \"never\",\n          \
+    \  \"spanNulls\": false,\n            \"stacking\": {\"mode\": \"none\", \"group\"\
+    : \"A\"},\n            \"thresholdsStyle\": {\"mode\": \"off\"}\n          },\n\
+    \          \"unit\": \"short\"\n        }\n      },\n      \"gridPos\": {\n  \
+    \      \"h\": 8,\n        \"w\": 12,\n        \"x\": 0,\n        \"y\": 24\n \
+    \     },\n      \"id\": 10,\n      \"options\": {\n        \"legend\": {\n   \
+    \       \"calcs\": [\"lastNotNull\", \"mean\"],\n          \"displayMode\": \"\
+    table\",\n          \"placement\": \"bottom\",\n          \"showLegend\": true\n\
+    \        },\n        \"tooltip\": {\"mode\": \"multi\", \"sort\": \"none\"}\n\
+    \      },\n      \"pluginVersion\": \"10.0.0\",\n      \"targets\": [\n      \
+    \  {\n          \"datasource\": {\"type\": \"prometheus\", \"uid\": \"prometheus\"\
+    },\n          \"expr\": \"rate(pg_stat_database_blks_read{job=\\\"postgres\\\"\
+    ,datname=\\\"lingualink\\\"}[5m])\",\n          \"legendFormat\": \"Disk Blocks\
+    \ Read\",\n          \"refId\": \"A\"\n        },\n        {\n          \"datasource\"\
+    : {\"type\": \"prometheus\", \"uid\": \"prometheus\"},\n          \"expr\": \"\
+    rate(pg_stat_database_blks_hit{job=\\\"postgres\\\",datname=\\\"lingualink\\\"\
+    }[5m])\",\n          \"legendFormat\": \"Cache Blocks Hit\",\n          \"refId\"\
+    : \"B\"\n        }\n      ],\n      \"title\": \"Block I/O\",\n      \"type\"\
+    : \"timeseries\"\n    },\n    {\n      \"datasource\": {\n        \"type\": \"\
+    prometheus\",\n        \"uid\": \"prometheus\"\n      },\n      \"fieldConfig\"\
+    : {\n        \"defaults\": {\n          \"color\": {\"mode\": \"palette-classic\"\
+    },\n          \"custom\": {\n            \"axisCenteredZero\": false,\n      \
+    \      \"axisColorMode\": \"text\",\n            \"axisLabel\": \"tuples\",\n\
+    \            \"axisPlacement\": \"auto\",\n            \"barAlignment\": 0,\n\
+    \            \"drawStyle\": \"line\",\n            \"fillOpacity\": 10,\n    \
+    \        \"gradientMode\": \"none\",\n            \"hideFrom\": {\n          \
+    \    \"tooltip\": false,\n              \"viz\": false,\n              \"legend\"\
+    : false\n            },\n            \"lineInterpolation\": \"smooth\",\n    \
+    \        \"lineWidth\": 2,\n            \"pointSize\": 5,\n            \"scaleDistribution\"\
+    : {\"type\": \"linear\"},\n            \"showPoints\": \"never\",\n          \
+    \  \"spanNulls\": false,\n            \"stacking\": {\"mode\": \"none\", \"group\"\
+    : \"A\"},\n            \"thresholdsStyle\": {\"mode\": \"off\"}\n          },\n\
+    \          \"unit\": \"short\"\n        }\n      },\n      \"gridPos\": {\n  \
+    \      \"h\": 8,\n        \"w\": 12,\n        \"x\": 12,\n        \"y\": 24\n\
+    \      },\n      \"id\": 11,\n      \"options\": {\n        \"legend\": {\n  \
+    \        \"calcs\": [\"lastNotNull\"],\n          \"displayMode\": \"table\",\n\
+    \          \"placement\": \"bottom\",\n          \"showLegend\": true\n      \
+    \  },\n        \"tooltip\": {\"mode\": \"multi\", \"sort\": \"none\"}\n      },\n\
+    \      \"pluginVersion\": \"10.0.0\",\n      \"targets\": [\n        {\n     \
+    \     \"datasource\": {\"type\": \"prometheus\", \"uid\": \"prometheus\"},\n \
+    \         \"expr\": \"sum(pg_stat_user_tables_n_live_tup{job=\\\"postgres\\\"\
+    })\",\n          \"legendFormat\": \"Live Tuples\",\n          \"refId\": \"A\"\
+    \n        },\n        {\n          \"datasource\": {\"type\": \"prometheus\",\
+    \ \"uid\": \"prometheus\"},\n          \"expr\": \"sum(pg_stat_user_tables_n_dead_tup{job=\\\
+    \"postgres\\\"})\",\n          \"legendFormat\": \"Dead Tuples\",\n          \"\
+    refId\": \"B\"\n        }\n      ],\n      \"title\": \"Table Health (Live vs\
+    \ Dead Tuples)\",\n      \"type\": \"timeseries\"\n    }\n  ],\n  \"refresh\"\
+    : \"10s\",\n  \"schemaVersion\": 38,\n  \"style\": \"dark\",\n  \"tags\": [\"\
+    postgres\", \"database\", \"lingua-app\"],\n  \"templating\": {\n    \"list\"\
+    : []\n  },\n  \"time\": {\n    \"from\": \"now-6h\",\n    \"to\": \"now\"\n  },\n\
+    \  \"timepicker\": {},\n  \"timezone\": \"\",\n  \"title\": \"PostgreSQL Database\"\
+    ,\n  \"uid\": \"postgres-db\",\n  \"version\": 1,\n  \"weekStart\": \"\"\n}\n"

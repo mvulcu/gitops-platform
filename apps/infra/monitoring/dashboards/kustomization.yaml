@@ -5,3 +5,4 @@ resources:
   - lingua-app-configmap.yaml
   - app-logs-configmap.yaml
   - backend-api-dashboard-configmap.yaml
+  - postgres-dashboard-configmap.yaml

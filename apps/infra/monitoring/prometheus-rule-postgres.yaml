@@ -1,0 +1,173 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: postgres-alerts
+  namespace: monitoring
+  labels:
+    app: kube-prometheus-stack
+    release: kube-prometheus-stack
+spec:
+  groups:
+  - name: postgresql
+    interval: 30s
+    rules:
+    # PostgreSQL Down
+    - alert: PostgreSQLDown
+      expr: pg_up{job="postgres"} == 0
+      for: 2m
+      labels:
+        severity: critical
+        component: database
+        service: postgres
+      annotations:
+        summary: "PostgreSQL database is DOWN"
+        description: "PostgreSQL instance is not responding for more than 2 minutes.\nImmediate attention required!"
+
+    # Too Many Connections (>80% of max_connections)
+    - alert: PostgreSQLTooManyConnections
+      expr: |
+        (sum(pg_stat_activity_count{job="postgres"})
+         / pg_settings_max_connections{job="postgres"}) * 100 > 80
+      for: 5m
+      labels:
+        severity: warning
+        component: database
+        service: postgres
+      annotations:
+        summary: "PostgreSQL too many connections"
+        description: "PostgreSQL is using {{ $value | humanizePercentage }} of max_connections (threshold: 80%).\nMay need to increase connection limit or check for connection leaks."
+
+    # Connection Exhaustion (>95% of max_connections)
+    - alert: PostgreSQLConnectionExhaustion
+      expr: |
+        (sum(pg_stat_activity_count{job="postgres"})
+         / pg_settings_max_connections{job="postgres"}) * 100 > 95
+      for: 1m
+      labels:
+        severity: critical
+        component: database
+        service: postgres
+      annotations:
+        summary: "PostgreSQL connection exhaustion imminent"
+        description: "PostgreSQL is using {{ $value | humanizePercentage }} of max_connections (threshold: 95%).\nConnection exhaustion imminent - new connections will fail!"
+
+    # High Transaction Rate
+    - alert: PostgreSQLHighTransactionRate
+      expr: rate(pg_stat_database_xact_commit{job="postgres"}[5m]) > 1000
+      for: 10m
+      labels:
+        severity: info
+        component: database
+        service: postgres
+      annotations:
+        summary: "High transaction rate on PostgreSQL"
+        description: "PostgreSQL is processing {{ $value | humanize }} transactions/sec.\nThis may be normal, but worth monitoring."
+
+    # Replication Lag (if replication is configured)
+    - alert: PostgreSQLReplicationLag
+      expr: |
+        (pg_replication_lag{job="postgres"} > 30)
+        and
+        (pg_replication_lag{job="postgres"} != 0)
+      for: 5m
+      labels:
+        severity: warning
+        component: database
+        service: postgres
+      annotations:
+        summary: "PostgreSQL replication lag detected"
+        description: "Replication lag is {{ $value | humanize }} seconds (threshold: 30s).\nStandby replica is falling behind."
+
+    # Dead Tuples (needs VACUUM)
+    - alert: PostgreSQLTooManyDeadTuples
+      expr: |
+        (pg_stat_user_tables_n_dead_tup{job="postgres"}
+         / (pg_stat_user_tables_n_live_tup{job="postgres"} + pg_stat_user_tables_n_dead_tup{job="postgres"})) > 0.1
+      for: 10m
+      labels:
+        severity: warning
+        component: database
+        service: postgres
+      annotations:
+        summary: "PostgreSQL has too many dead tuples"
+        description: "Table {{ $labels.relname }} has {{ $value | humanizePercentage }} dead tuples (threshold: 10%).\nVACUUM may be needed to reclaim space."
+
+    # Low Cache Hit Ratio (<90%)
+    - alert: PostgreSQLLowCacheHitRatio
+      expr: |
+        (pg_stat_database_blks_hit{job="postgres",datname!~"template.*|postgres"}
+         / (pg_stat_database_blks_hit{job="postgres",datname!~"template.*|postgres"}
+            + pg_stat_database_blks_read{job="postgres",datname!~"template.*|postgres"})) * 100 < 90
+      for: 15m
+      labels:
+        severity: warning
+        component: database
+        service: postgres
+      annotations:
+        summary: "PostgreSQL low cache hit ratio"
+        description: "Database {{ $labels.datname }} has {{ $value | humanizePercentage }} cache hit ratio (threshold: 90%).\nConsider increasing shared_buffers or analyzing query patterns."
+
+    # Long Running Queries (>5 minutes)
+    - alert: PostgreSQLLongRunningQueries
+      expr: |
+        pg_stat_activity_max_tx_duration{job="postgres"} > 300
+      for: 5m
+      labels:
+        severity: warning
+        component: database
+        service: postgres
+      annotations:
+        summary: "Long running queries detected"
+        description: "Query has been running for {{ $value | humanizeDuration }} (threshold: 5m).\nCheck for slow queries or locks."
+
+    # Database Size Growing Rapidly
+    - alert: PostgreSQLDatabaseSizeGrowth
+      expr: |
+        rate(pg_database_size_bytes{job="postgres",datname!~"template.*|postgres"}[1h]) > 10485760
+      for: 30m
+      labels:
+        severity: info
+        component: database
+        service: postgres
+      annotations:
+        summary: "PostgreSQL database growing rapidly"
+        description: "Database {{ $labels.datname }} is growing at {{ $value | humanize }}B/s.\nMonitor disk space usage."
+
+    # Too Many Locks
+    - alert: PostgreSQLTooManyLocks
+      expr: |
+        sum(pg_locks_count{job="postgres"}) > 100
+      for: 10m
+      labels:
+        severity: warning
+        component: database
+        service: postgres
+      annotations:
+        summary: "PostgreSQL has too many locks"
+        description: "PostgreSQL currently has {{ $value }} locks (threshold: 100).\nCheck for lock contention or deadlocks."
+
+    # Idle in Transaction Connections
+    - alert: PostgreSQLIdleInTransaction
+      expr: |
+        pg_stat_activity_count{job="postgres",state="idle in transaction"} > 5
+      for: 10m
+      labels:
+        severity: warning
+        component: database
+        service: postgres
+      annotations:
+        summary: "PostgreSQL has idle in transaction connections"
+        description: "{{ $value }} connections are idle in transaction for >10min.\nThese hold locks and prevent VACUUM - may indicate application issues."
+
+    # Exporter Scrape Errors
+    - alert: PostgreSQLExporterErrors
+      expr: |
+        rate(pg_exporter_last_scrape_error{job="postgres"}[5m]) > 0
+      for: 5m
+      labels:
+        severity: warning
+        component: monitoring
+        service: postgres
+      annotations:
+        summary: "PostgreSQL exporter errors detected"
+        description: "Postgres exporter is encountering errors while scraping metrics.\nCheck exporter logs and database permissions."
