@@ -1,0 +1,74 @@
+# FluxCD Image Automation for ADHD App
+# This enables automatic updates of Docker images from GHCR
+
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: mywebadhd
+  namespace: flux-system
+spec:
+  image: ghcr.io/mvulcu/testadhd
+  interval: 1m
+  secretRef:
+    name: ghcr-secret
+
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: mywebadhd
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: mywebadhd
+  policy:
+    # Use semver for proper versioning or latest for simple case
+    # semver:
+    #   range: ">=1.0.0"
+
+    # For now, use alphabetical to get the latest tag
+    alphabetical:
+      order: asc
+  filterTags:
+    # Match tags like: latest, main-abc123, main-abc123-1234567890
+    pattern: '^(latest|main-.*)$'
+
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImageUpdateAutomation
+metadata:
+  name: mywebadhd
+  namespace: flux-system
+spec:
+  interval: 1m
+  sourceRef:
+    kind: GitRepository
+    name: gitops-platform
+  git:
+    checkout:
+      ref:
+        branch: master
+    commit:
+      author:
+        email: fluxcdbot@users.noreply.github.com
+        name: Flux CD Bot
+      messageTemplate: |
+        [flux] Update ADHD app image
+
+        Automation: {{ .AutomationObject }}
+
+        Files updated:
+        {{ range $filename, $_ := .Updated.Files -}}
+        - {{ $filename }}
+        {{ end -}}
+
+        Images:
+        {{ range .Updated.Images -}}
+        - {{ . }}
+        {{ end -}}
+    push:
+      branch: master
+  update:
+    path: "./apps/adhd-app"
+    strategy: Setters

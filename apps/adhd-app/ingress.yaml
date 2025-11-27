@@ -1,0 +1,37 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mywebadhd
+  namespace: adhd
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - cachefly.site
+        - www.cachefly.site
+      secretName: cachefly-tls
+  rules:
+    - host: cachefly.site
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: mywebadhd
+                port:
+                  number: 3000
+    - host: www.cachefly.site
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: mywebadhd
+                port:
+                  number: 3000

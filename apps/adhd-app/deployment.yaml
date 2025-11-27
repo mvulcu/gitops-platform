@@ -1,0 +1,102 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mywebadhd
+  namespace: adhd
+  labels:
+    app: mywebadhd
+    component: web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mywebadhd
+  template:
+    metadata:
+      labels:
+        app: mywebadhd
+        component: web
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+
+      # Security: Run as non-root user
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        fsGroup: 1001
+        seccompProfile:
+          type: RuntimeDefault
+
+      containers:
+        - name: mywebadhd
+          # Auto-updated by FluxCD ImageUpdateAutomation
+          image: ghcr.io/mvulcu/testadhd:latest  # {"$imagepolicy": "flux-system:mywebadhd"}
+          imagePullPolicy: Always
+
+          ports:
+            - containerPort: 3000
+              name: http
+              protocol: TCP
+
+          # Security: Container-level security context
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            runAsNonRoot: true
+            runAsUser: 1001
+            capabilities:
+              drop:
+                - ALL
+
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: PORT
+              value: "3000"
+            - name: HOSTNAME
+              value: "0.0.0.0"
+            - name: NEXT_PUBLIC_SITE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: adhd-secrets
+                  key: NEXT_PUBLIC_SITE_URL
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: adhd-secrets
+                  key: MONGODB_URI
+            - name: CLAUDE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: adhd-secrets
+                  key: CLAUDE_API_KEY
+                  optional: true
+
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
+
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
