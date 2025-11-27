@@ -16,6 +16,7 @@ spec:
       labels:
         app: mywebadhd
         component: web
+        redeploy-trigger: "1"
     spec:
       imagePullSecrets:
         - name: ghcr-secret
