@@ -1,8 +1,4 @@
-# FluxCD Image Automation for ADHD App
-# This enables automatic updates of Docker images from GHCR
-
----
-apiVersion: image.toolkit.fluxcd.io/v1beta2
+apiVersion: image.toolkit.fluxcd.io/v1
 kind: ImageRepository
 metadata:
   name: mywebadhd
@@ -14,7 +10,7 @@ spec:
     name: ghcr-secret
 
 ---
-apiVersion: image.toolkit.fluxcd.io/v1beta2
+apiVersion: image.toolkit.fluxcd.io/v1
 kind: ImagePolicy
 metadata:
   name: mywebadhd
@@ -23,19 +19,13 @@ spec:
   imageRepositoryRef:
     name: mywebadhd
   policy:
-    # Use semver for proper versioning or latest for simple case
-    # semver:
-    #   range: ">=1.0.0"
-
-    # For now, use alphabetical to get the latest tag
     alphabetical:
       order: asc
   filterTags:
-    # Match tags like: latest, main-abc123, main-abc123-1234567890
     pattern: "^(latest|main-.*)$"
 
 ---
-apiVersion: image.toolkit.fluxcd.io/v1beta2
+apiVersion: image.toolkit.fluxcd.io/v1
 kind: ImageUpdateAutomation
 metadata:
   name: mywebadhd
@@ -45,6 +35,7 @@ spec:
   sourceRef:
     kind: GitRepository
     name: gitops-platform
+    namespace: flux-system
   git:
     checkout:
       ref:
