@@ -19,9 +19,10 @@ spec:
   imageRepositoryRef:
     name: mywebadhd
   filterTags:
-    pattern: "^main-.*$"
+    pattern: "^main-(?P<number>\\d+)-[a-f0-9]+$"
+    extract: "$number"
   policy:
-    alphabetical:
+    numerical:
       order: desc
 
 ---
