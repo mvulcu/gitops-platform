@@ -73,6 +73,16 @@ spec:
                   name: adhd-secrets
                   key: CLAUDE_API_KEY
                   optional: true
+            - name: ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: adhd-secrets
+                  key: ADMIN_PASSWORD
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: adhd-secrets
+                  key: JWT_SECRET
 
           resources:
             requests:
