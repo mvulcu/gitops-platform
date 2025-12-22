@@ -32,7 +32,7 @@ spec:
       containers:
         - name: mywebadhd
           # Auto-updated by FluxCD ImageUpdateAutomation
-          image: ghcr.io/mvulcu/testadhd:main-37-4f171cf311be1b6a30f06a2994a76f82e6efba5b  # {"$imagepolicy": "flux-system:mywebadhd"}
+          image: ghcr.io/mvulcu/testadhd:main-38-a47ce8808b6cd1ad7730fc5dc4a13a1aae9c86c2  # {"$imagepolicy": "flux-system:mywebadhd"}
           imagePullPolicy: Always
 
           ports:
